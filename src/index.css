@@ -3,12 +3,18 @@
 @layer base {
     html {
       @apply text-grey-light
-    } 
+    }
     body {
         @apply bg-blue-dark
     }
     .link {
       @apply hover:text-blue-light duration-100
+    }
+    input[type=text] {
+        @apply border-2 rounded-md bg-transparent px-2 py-3 text-xl duration-100
+    }
+    button {
+        @apply bg-blue-light rounded-md
     }
   }
 

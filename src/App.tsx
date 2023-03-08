@@ -1,12 +1,21 @@
-import { useEffect, useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { Header } from './components/Header';
+import { SignUp } from './pages/SignUp';
 
-export const App = () => {
-    return (
-        <>
-            <Header />
-        </>
-    );
-};  
+export const Root = () => (
+    <>
+        <Header />
+        <Outlet />
+    </>
+);
+
+export const router = createBrowserRouter([{
+    path: '/',
+    element: <Root />,
+    children: [
+        {
+            path: '/sign-up',
+            element: <SignUp />,
+        },
+    ],
+}]);

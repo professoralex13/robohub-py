@@ -17,7 +17,6 @@ module.exports = {
       borderRadius: {
         DEFAULT: '17px',
       }
-
     }
   },
   plugins: [],
