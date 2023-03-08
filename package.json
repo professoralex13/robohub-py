@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "clsx": "^1.2.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tabler-icons-react": "^1.56.0"
   },
   "devDependencies": {
     "@synaptic-simulations/eslint-config": "^1.0.2",

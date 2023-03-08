@@ -1,3 +1,16 @@
 @tailwind base;
+
+@layer base {
+    html {
+      @apply text-grey-light
+    } 
+    body {
+        @apply bg-blue-dark
+    }
+    .link {
+      @apply hover:text-blue-light duration-100
+    }
+  }
+
 @tailwind components;
 @tailwind utilities;
