@@ -1,0 +1,146 @@
+// generator
+generator client {
+    provider             = "prisma-client-py"
+    interface            = "sync"
+    recursive_type_depth = 5
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = "file:../database.db"
+}
+
+model User {
+    id              Int                @id @default(autoincrement())
+    username        String
+    fullName        String?
+    passwordHash    String
+    email           String
+    notebookEntries NoteBookEntry[]
+    blogs           Blog[]
+    organisations   OrganisationUser[]
+    teams           TeamUser[]
+}
+
+model OrganisationUser {
+    userId         Int
+    organisationId Int
+
+    user         User         @relation(fields: [userId], references: [id])
+    organisation Organisation @relation(fields: [organisationId], references: [id])
+
+    isAdmin Boolean
+
+    @@id([userId, organisationId])
+}
+
+model Organisation {
+    id          Int                @id @default(autoincrement())
+    name        String             @unique
+    description String
+    location    String
+    teams       Team[]
+    categories  Category[]
+    partStocks  PartStock[]
+    customParts Part[]
+    blogs       Blog[]
+    users       OrganisationUser[]
+}
+
+model TeamUser {
+    userId Int
+    teamId String
+
+    user User @relation(fields: [userId], references: [id])
+    team Team @relation(fields: [teamId], references: [id])
+
+    isLeader Boolean
+
+    @@id([userId, teamId])
+}
+
+model Team {
+    id             String       @id
+    name           String
+    organisation   Organisation @relation(fields: [organisationId], references: [id])
+    organisationId Int
+    notebooks      NoteBook[]
+    users          TeamUser[]
+
+    @@unique([name, organisationId])
+}
+
+model Part {
+    id             Int           @id @default(autoincrement())
+    name           String
+    category       Category?     @relation(fields: [categoryId], references: [id])
+    organisation   Organisation? @relation(fields: [organisationId], references: [id])
+    categoryId     Int?
+    organisationId Int?
+    stocks         PartStock[]
+
+    @@unique([name, organisationId])
+}
+
+model PartStock {
+    organisation Organisation @relation(fields: [organisationId], references: [id])
+    part         Part         @relation(fields: [partId], references: [id])
+    count        Int          @default(0)
+
+    organisationId Int
+    partId         Int
+
+    @@id([organisationId, partId])
+}
+
+model Category {
+    id   Int    @id @default(autoincrement())
+    name String
+
+    parentCategory  Category?     @relation("CategoryParents", fields: [parentCategoryId], references: [id])
+    childCategories Category[]    @relation("CategoryParents")
+    organisation    Organisation? @relation(fields: [organisationId], references: [id])
+
+    parts Part[]
+
+    organisationId   Int?
+    parentCategoryId Int?
+
+    @@unique([name, organisationId])
+}
+
+model NoteBook {
+    id          Int     @id @default(autoincrement())
+    title       String
+    description String?
+
+    team            Team            @relation(fields: [teamId], references: [id])
+    teamId          String
+    notebookEntries NoteBookEntry[]
+
+    @@unique([title, teamId])
+}
+
+model NoteBookEntry {
+    id           Int      @id @default(autoincrement())
+    content      String
+    creationDate DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+
+    notebook   NoteBook @relation(fields: [notebookId], references: [id])
+    notebookId Int
+    authors    User[]
+}
+
+model Blog {
+    id          Int     @id @default(autoincrement())
+    title       String
+    description String?
+    content     String
+    authors     User[]
+
+    creationDate DateTime @default(now())
+
+    organisation   Organisation @relation(fields: [organisationId], references: [id])
+    organisationId Int
+}

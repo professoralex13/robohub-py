@@ -1,0 +1,4 @@
+flask == 2.2.3
+flask_cors == 3.0.10
+python-dotenv == 1.0.0
+prisma == 0.8.2
