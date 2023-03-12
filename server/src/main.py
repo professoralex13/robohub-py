@@ -1,5 +1,5 @@
 from datetime import timedelta
-from flask import Flask, Response
+from flask import Flask, Response, g
 from flask_cors import CORS
 from config import JWT_SECRET
 from routes.auth import auth_router, jwt, refresh_expiring_jwts
@@ -18,6 +18,11 @@ app.register_blueprint(auth_router, url_prefix="/auth")
 def after_request(response: Response):
     return refresh_expiring_jwts(response)
 
+@app.teardown_appcontext
+def close_database_connection(_):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.disconnect()
 
 if __name__ == '__main__':
     app.run(debug=True)

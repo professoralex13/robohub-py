@@ -3,7 +3,7 @@ import json
 from flask import Blueprint, Response, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies
 
-from database import database
+from database import get_database
 
 from config import EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
 
@@ -20,7 +20,7 @@ def sign_up():
     else:
         return { "error": "Content type must be application/json" }, 415
  
-    database.user.create(data={
+    get_database().user.create(data={
         "email": email,
         "username": username,
         "passwordHash": password,
@@ -58,7 +58,7 @@ def logout():
 
 @auth_router.get("/email-taken/<email>")
 def email_taken(email: str):
-    in_use = database.user.find_first(where={
+    in_use = get_database().user.find_first(where={
         'email': email,
     })
     return jsonify(in_use is not None)
@@ -66,7 +66,7 @@ def email_taken(email: str):
 
 @auth_router.get("/username-taken/<username>")
 def username_taken(username: str):
-    in_use = database.user.find_first(where={
+    in_use = get_database().user.find_first(where={
         'username': username,
     })
     return jsonify(in_use is not None)
