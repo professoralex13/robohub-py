@@ -12,17 +12,17 @@ export const TextField: FC<FieldAttributes<any>> = ({ type = 'text', ...props })
             <span
                 className={clsx(
                     !field.value && 'opacity-0',
-                    hasError ? 'text-red-600' : 'text-grey-light',
+                    hasError ? 'text-red-400' : 'text-grey-light',
                     'duration-100 absolute left-2 top-[-0.7rem] bg-blue-dark px-1',
                 )}
             >
                 {props.placeholder}
             </span>
-            <Field {...props} type={type} className={clsx(hasError ? 'border-red-600' : 'border-blue-light')} />
+            <Field {...props} type={type} className={clsx(hasError ? 'border-red-400' : 'border-blue-light')} />
             <span
                 className={clsx(
                     !hasError && 'opacity-0',
-                    'text-red-600 duration-100 text-xs',
+                    'text-red-400 duration-100 text-xs',
                 )}
             >
                 &nbsp;{meta.error}

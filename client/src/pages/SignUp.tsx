@@ -10,7 +10,7 @@ const SignUpSchema = Yup.object().shape({
 });
 
 export const SignUp = () => (
-    <div className="flex flex-col items-center space-y-5">
+    <div className="flex flex-col items-center gap-5">
         <span className="text-5xl mt-7">Sign Up for <span className="text-blue-light">robohub</span></span>
         <Formik
             initialValues={{ email: '', username: '', password: '', confirmPassword: '' }}
@@ -20,7 +20,7 @@ export const SignUp = () => (
             validationSchema={SignUpSchema}
         >
             {({ submitForm, isSubmitting }) => (
-                <Form className="flex flex-col justify-around items-center p-5 space-y-5">
+                <Form className="flex flex-col justify-around items-center p-5 gap-5">
                     <TextField name="email" placeholder="email" />
                     <TextField name="username" placeholder="username" />
                     <TextField name="password" placeholder="password" type="password" />

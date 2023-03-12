@@ -11,7 +11,7 @@ const Link: FC<PropsWithChildren<LinkProps>> = ({ to, children }) => (
 );
 
 export const Header = () => (
-    <header className="flex items-center p-5 border-b-4 space-x-16 border-blue-light justify-between">
+    <header className="flex items-center p-5 border-b-4 gap-16 border-blue-light justify-between">
         <span className="text-blue-light text-5xl mr-auto">robohub</span>
         <Link to="/blogs">Blogs</Link>
         <Link to="/teams">Teams</Link>

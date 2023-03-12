@@ -13,12 +13,6 @@ export const Root = () => (
 export const router = createBrowserRouter([{
     path: '/',
     element: <Root />,
-    loader: () => {
-        console.log('loading');
-        return new Promise((resolve) => {
-            setTimeout(() => resolve({}), 1000);
-        });
-    },
     children: [
         {
             path: '/sign-up',

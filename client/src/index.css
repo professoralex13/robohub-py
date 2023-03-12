@@ -2,7 +2,7 @@
 
 @layer base {
     html {
-      @apply text-grey-light
+      @apply text-neutral-50
     }
     body {
         @apply bg-blue-dark
@@ -14,7 +14,7 @@
         @apply border-2 rounded-md bg-transparent px-2 py-3 text-xl duration-100
     }
     button {
-        @apply bg-blue-light text-blue-dark rounded-md p-4 text-xl duration-200 !important
+        @apply bg-blue-light text-blue-dark rounded-md px-4 py-3 text-xl duration-200 !important
     }
     button:hover {
       @apply shadow-button
