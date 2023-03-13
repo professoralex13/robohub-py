@@ -12,7 +12,7 @@ import { getResponseErrorMessage, requestUnauthorized, useRequest } from '../hoo
  * @param maxRate Maximum rate the validation can be called in milliseconds
  * @returns The wrapped validator function
  */
-const cacheRateLimitedTest = (asyncValidate: (val: string) => Promise<boolean>, maxRate: number = 500) => {
+const cacheRateLimitedTest = (asyncValidate: (val: string) => Promise<boolean>, maxRate: number = 1000) => {
     let valid = false;
     let previousValue = '';
     let previousTimestamp = Date.now();

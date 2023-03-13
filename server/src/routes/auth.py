@@ -1,63 +1,78 @@
 from datetime import datetime, timezone, timedelta
 import json
 from flask import Blueprint, Response, jsonify, request
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt, get_jwt_identity, unset_jwt_cookies
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    unset_jwt_cookies,
+)
 
-from database import get_database
+from ..database import get_database
 
-from config import EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
+from ..config import EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
 
 jwt = JWTManager()
 
 auth_router = Blueprint("auth", __name__)
 
+
 @auth_router.post('/sign-up')
 def sign_up():
+    '''Handles a request to sign-up a new user'''
+
     if request.json is not None:
         email: str = request.json.get(EMAIL_KEY, None)
         username: str = request.json.get(USERNAME_KEY, None)
         password: str = request.json.get(PASSWORD_KEY, None)
     else:
-        return { "error": "Content type must be application/json" }, 415
- 
+        return {"error": "Content type must be application/json"}, 415
+
     get_database().user.create(data={
         "email": email,
         "username": username,
         "passwordHash": password,
     })
-    
+
     access_token = create_access_token(identity=email)
-    response = { "token": access_token, "oogabogga": "hehe" }
+    response = {"token": access_token, "oogabogga": "hehe"}
 
     return response
 
 
 @auth_router.post('/token')
 def get_token():
+    '''Handles a request for a user to login by generating a new jwt'''
+
     if request.json is not None:
         email: str = request.json.get(EMAIL_KEY, None)
         password: str = request.json.get(PASSWORD_KEY, None)
     else:
-        return { "error": "Content type must be application/json" }, 415
- 
+        return {"error": "Content type must be application/json"}, 415
+
     if email != "test" or password != "test":
-        return { "error": "Wrong email or password" }, 401
-        
+        return {"error": "Wrong email or password"}, 401
+
     access_token = create_access_token(identity=email)
-    response = { "token": access_token }
+    response = {"token": access_token}
 
     return response
 
 
 @auth_router.post("/logout")
 def logout():
-    response = jsonify({ "status": "logout sucessful" })
+    '''Handles a request to logout the user by clearing jwt cookies'''
+
+    response = jsonify({"status": "logout sucessful"})
     unset_jwt_cookies(response)
     return response
 
 
 @auth_router.get("/email-taken/<email>")
 def email_taken(email: str):
+    '''Handles a request to see whether a given email is taken by another user'''
+
     in_use = get_database().user.find_first(where={
         'email': email,
     })
@@ -66,6 +81,8 @@ def email_taken(email: str):
 
 @auth_router.get("/username-taken/<username>")
 def username_taken(username: str):
+    '''Handles a request to see whether a given username is taken by another user'''
+
     in_use = get_database().user.find_first(where={
         'username': username,
     })
@@ -81,7 +98,7 @@ def refresh_expiring_jwts(response: Response):
         if target_timestamp > expiry_timestamp:
             access_token = create_access_token(identity=get_jwt_identity())
             data = response.get_json()
-            
+
             if type(data) is dict:
                 data["token"] = access_token
                 response.data = json.dumps(data)
