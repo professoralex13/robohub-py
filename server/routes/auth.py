@@ -4,8 +4,8 @@ import json
 from flask import Blueprint, Response, jsonify, request
 from flask_jwt_extended import (
     JWTManager,
-    create_access_token, # type: ignore
-    get_jwt, # type: ignore
+    create_access_token,  # type: ignore
+    get_jwt,  # type: ignore
     get_jwt_identity,
     unset_jwt_cookies,
 )
@@ -91,6 +91,7 @@ def username_taken(username: str):
 
 
 def refresh_expiring_jwts(response: Response):
+    '''Refreshes bearer tokens which are half way to expiring'''
     try:
         expiry_timestamp: float = get_jwt()["exp"]
         now = datetime.now(timezone.utc)
@@ -100,7 +101,7 @@ def refresh_expiring_jwts(response: Response):
             access_token = create_access_token(identity=get_jwt_identity())
             data = response.get_json()
 
-            if type(data) is dict:
+            if isinstance(data, dict):
                 data["token"] = access_token
                 response.data = json.dumps(data)
 

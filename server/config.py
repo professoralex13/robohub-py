@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=Path(".env"))
 
+
 class MissingEnvironmentVariable(Exception):
     '''
         Exception for missing environment variable configuration
