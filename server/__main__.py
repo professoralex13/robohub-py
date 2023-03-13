@@ -2,8 +2,8 @@
 from datetime import timedelta
 from flask import Flask, Response, g
 from flask_cors import CORS
-from routes.auth import auth_router, jwt, refresh_expiring_jwts
-from .config import JWT_SECRET
+from server.routes.auth import auth_router, jwt, refresh_expiring_jwts
+from server.config import JWT_SECRET
 
 
 app = Flask(__name__)

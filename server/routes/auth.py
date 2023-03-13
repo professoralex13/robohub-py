@@ -1,17 +1,18 @@
+'''Authentication route handlers'''
 from datetime import datetime, timezone, timedelta
 import json
 from flask import Blueprint, Response, jsonify, request
 from flask_jwt_extended import (
     JWTManager,
-    create_access_token,
-    get_jwt,
+    create_access_token, # type: ignore
+    get_jwt, # type: ignore
     get_jwt_identity,
     unset_jwt_cookies,
 )
 
-from ..database import get_database
+from server.database import get_database
 
-from ..config import EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
+from server.config import EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
 
 jwt = JWTManager()
 
