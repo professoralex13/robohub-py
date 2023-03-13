@@ -5,6 +5,14 @@ from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=Path(".env"))
 
+class MissingEnvironmentVariable(Exception):
+    '''
+        Exception for missing environment variable configuration
+    '''
+
+    def __init__(self, variable_name: str) -> None:
+        super().__init__(f"{variable_name} could not be found in .env")
+
 
 def load_from_env(key: str) -> str:
     '''
@@ -14,7 +22,7 @@ def load_from_env(key: str) -> str:
     result = os.getenv("JWT_SECRET")
 
     if result is None:
-        raise Exception(f"{key} could not be found in .env")
+        raise MissingEnvironmentVariable(key)
 
     return result
 
