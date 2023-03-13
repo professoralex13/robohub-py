@@ -18,7 +18,7 @@ export const SignIn = () => {
 
     return (
         <div className="flex flex-col items-center gap-5">
-            <span className="text-5xl mt-7">Sign In to <span className="text-blue-light">robohub</span></span>
+            <span className="text-5xl mt-7">Sign In to <span className="text-navy-500">robohub</span></span>
             <Formik
                 initialValues={{ emailUsername: '', password: '' }}
                 onSubmit={async ({ emailUsername, password }, { setStatus }) => request(

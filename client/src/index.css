@@ -5,16 +5,16 @@
       @apply text-neutral-50
     }
     body {
-        @apply bg-blue-dark
+      @apply bg-navy-900
     }
     .link {
-      @apply hover:text-blue-light duration-100
+      @apply hover:text-navy-500 duration-100
     }
     input[type=text], input[type=password] {
-        @apply border-2 rounded-md bg-transparent px-2 py-3 text-xl duration-100
+      @apply border-2 rounded-md bg-transparent px-2 py-3 text-xl duration-100
     }
     button {
-        @apply bg-blue-light text-blue-dark rounded-md px-4 py-3 text-xl duration-200 !important
+      @apply bg-navy-500 text-navy-900 rounded-md px-4 py-3 text-xl duration-200 !important
     }
     button:hover {
       @apply shadow-button

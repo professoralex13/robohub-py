@@ -63,7 +63,7 @@ export const SignUp = () => {
 
     return (
         <div className="flex flex-col items-center gap-5">
-            <span className="text-5xl mt-7">Sign Up for <span className="text-blue-light">robohub</span></span>
+            <span className="text-5xl mt-7">Sign Up for <span className="text-navy-500">robohub</span></span>
             <Formik
                 initialValues={{ email: '', username: '', password: '', confirmPassword: '' }}
                 onSubmit={async ({ email, username, password }, { setStatus }) => request(
