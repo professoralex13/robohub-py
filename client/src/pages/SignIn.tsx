@@ -17,8 +17,8 @@ export const SignIn = () => {
     const request = useRequest();
 
     return (
-        <div className="flex flex-col items-center gap-5">
-            <span className="text-5xl mt-7">Sign In to <span className="text-navy-500">robohub</span></span>
+        <div className="flex flex-col items-center justify-center gap-16 h-screen">
+            <span className="text-6xl">Sign In to <span className="text-navy-300">robohub</span></span>
             <Formik
                 initialValues={{ emailUsername: '', password: '' }}
                 onSubmit={async ({ emailUsername, password }, { setStatus }) => request(
@@ -41,7 +41,7 @@ export const SignIn = () => {
                 validationSchema={SignInSchema}
             >
                 {({ submitForm, isSubmitting, status }) => (
-                    <Form className="flex flex-col justify-around items-center p-5 gap-5">
+                    <Form className="flex flex-col justify-around items-center p-10 gap-5 rounded-md bg-navy-800 border-slate-500 border-2 border-opacity-50">
                         <TextField name="emailUsername" placeholder="Email / Username" />
                         <TextField name="password" placeholder="Password" type="password" />
 
