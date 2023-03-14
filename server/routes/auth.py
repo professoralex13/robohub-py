@@ -1,6 +1,7 @@
 '''Authentication route handlers'''
 from datetime import datetime, timezone, timedelta
 import json
+import hashlib
 from flask import Blueprint, Response, jsonify, request
 from flask_jwt_extended import (
     JWTManager,
@@ -12,7 +13,7 @@ from flask_jwt_extended import (
 
 from server.database import get_database
 
-from server.config import EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
+from server.config import SALT, EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
 
 jwt = JWTManager()
 
@@ -30,10 +31,12 @@ def sign_up():
     else:
         return {"error": "Content type must be application/json"}, 415
 
+    salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
+
     get_database().user.create(data={
         "email": email,
         "username": username,
-        "passwordHash": password,
+        "passwordHash": salted_password,
     })
 
     access_token = create_access_token(identity=email)
@@ -52,7 +55,13 @@ def get_token():
     else:
         return {"error": "Content type must be application/json"}, 415
 
-    if email != "test" or password != "test":
+    user = get_database().user.find_first(where={
+        'email': email,
+    })
+
+    salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
+
+    if user is None or user.passwordHash != salted_password:
         return {"error": "Wrong email or password"}, 401
 
     access_token = create_access_token(identity=email)
