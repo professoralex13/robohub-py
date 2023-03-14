@@ -11,7 +11,7 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
 )
 
-from server.database import get_database
+from server.database import database
 
 from server.config import SALT, EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
 
@@ -33,7 +33,7 @@ def sign_up():
 
     salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
 
-    get_database().user.create(data={
+    database.user.create(data={
         "email": email,
         "username": username,
         "passwordHash": salted_password,
@@ -55,7 +55,7 @@ def get_token():
     else:
         return {"error": "Content type must be application/json"}, 415
 
-    user = get_database().user.find_first(where={
+    user = database.user.find_first(where={
         'email': email,
     })
 
@@ -83,7 +83,7 @@ def logout():
 def email_taken(email: str):
     '''Handles a request to see whether a given email is taken by another user'''
 
-    in_use = get_database().user.find_first(where={
+    in_use = database.user.find_first(where={
         'email': email,
     })
     return jsonify(in_use is not None)
@@ -93,9 +93,10 @@ def email_taken(email: str):
 def username_taken(username: str):
     '''Handles a request to see whether a given username is taken by another user'''
 
-    in_use = get_database().user.find_first(where={
+    in_use = database.user.find_first(where={
         'username': username,
     })
+
     return jsonify(in_use is not None)
 
 

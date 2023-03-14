@@ -1,6 +1,6 @@
 '''Root of robohub backend'''
 from datetime import timedelta
-from flask import Flask, Response, g
+from flask import Flask, Response
 from flask_cors import CORS
 from server.routes.auth import auth_router, jwt, refresh_expiring_jwts
 from server.config import JWT_SECRET
@@ -22,15 +22,6 @@ def after_request(response: Response):
     '''Runs after any request to the backend API'''
 
     return refresh_expiring_jwts(response)
-
-
-@app.teardown_appcontext
-def close_database_connection(_):
-    '''Closes database connection when server is shutdown'''
-    database = getattr(g, '_database', None)
-
-    if database is not None:
-        database.disconnect()
 
 
 if __name__ == '__main__':
