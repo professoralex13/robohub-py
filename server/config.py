@@ -20,7 +20,7 @@ def load_from_env(key: str) -> str:
         Loads a variable from the .env file
         Raises an exception if it has not been defined
     '''
-    result = os.getenv("JWT_SECRET")
+    result = os.getenv(key)
 
     if result is None:
         raise MissingEnvironmentVariable(key)
