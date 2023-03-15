@@ -1,10 +1,11 @@
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { Oval } from 'react-loading-icons';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { TextField } from '../components/Form';
-import { getResponseErrorMessage, useRequest } from '../hooks/useRequest';
+import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from '../hooks/useRequest';
 import { ErrorBox } from '../components/Notication';
+import { useAuthenticationContext } from '../AuthenticationContext';
 
 const SignInSchema = Yup.object().shape({
     emailUsername: Yup.string().required('Required'),
@@ -12,24 +13,26 @@ const SignInSchema = Yup.object().shape({
 });
 
 export const SignIn = () => {
-    const navigate = useNavigate();
+    const { token, setToken } = useAuthenticationContext();
 
-    const request = useRequest();
+    if (token) {
+        return <Navigate to="/" />;
+    }
 
     return (
         <div className="flex flex-col items-center justify-center gap-16 h-screen">
             <span className="text-6xl">Sign In to <span className="text-navy-300">robohub</span></span>
             <Formik
                 initialValues={{ emailUsername: '', password: '' }}
-                onSubmit={async ({ emailUsername, password }, { setStatus }) => request(
+                onSubmit={async ({ emailUsername, password }, { setStatus }) => requestUnauthorized<TokenResponseType>(
                     '/auth/token',
                     'POST',
                     {
                         email: emailUsername,
                         password,
                     },
-                ).then(() => {
-                    navigate('/');
+                ).then(({ data }) => {
+                    setToken(data.token);
                 }).catch((error) => {
                     const [message, status] = getResponseErrorMessage(error);
                     if (status === 401) {

@@ -1,5 +1,6 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import * as yup from 'yup';
+import { useCallback } from 'react';
 import { useAuthenticationContext } from '../AuthenticationContext';
 
 const API_URL: string = import.meta.env.VITE_API_URL;
@@ -7,6 +8,8 @@ const API_URL: string = import.meta.env.VITE_API_URL;
 const TokenResponseSchema = yup.object().shape({
     token: yup.string().required(),
 });
+
+export type TokenResponseType = typeof TokenResponseSchema.__outputType;
 
 export function getResponseErrorMessage(error: any): [string, number] {
     if (error instanceof AxiosError) {
@@ -33,21 +36,21 @@ export function getResponseErrorMessage(error: any): [string, number] {
 export const useRequest = () => {
     const { token, setToken } = useAuthenticationContext();
 
-    async function request<T>(url: string, method: string, data?: any) {
-        const response = await axios<T>(`${API_URL}${url}`, {
-            method,
-            data,
-            headers: {
-                Authorization: token ? `Bearer ${token}` : undefined,
-            },
-        });
+    const request = useCallback(async <T extends {}>(url: string, method: string, data?: any): Promise<AxiosResponse<T, any>> => {
+        if (!token) {
+            return new Promise((_, reject) => {
+                reject(new Error('No Token'));
+            });
+        }
+
+        const response = await requestAuthorized<T>(url, method, token, data);
 
         if (TokenResponseSchema.isValidSync(response.data)) {
             setToken(response.data.token);
         }
 
         return response;
-    }
+    }, [token, setToken]);
 
     return request;
 };
@@ -56,5 +59,15 @@ export function requestUnauthorized<T>(url: string, method: string, data?: any) 
     return axios<T>(`${API_URL}${url}`, {
         method,
         data,
+    });
+}
+
+export function requestAuthorized<T>(url: string, method: string, token: string, data?: any) {
+    return axios<T>(`${API_URL}${url}`, {
+        method,
+        data,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     });
 }

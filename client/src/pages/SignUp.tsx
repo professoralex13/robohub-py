@@ -1,10 +1,11 @@
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { Oval } from 'react-loading-icons';
-import { useNavigate } from 'react-router';
+import { Navigate } from 'react-router';
 import { TextField } from '../components/Form';
 import { ErrorBox } from '../components/Notication';
-import { getResponseErrorMessage, requestUnauthorized, useRequest } from '../hooks/useRequest';
+import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from '../hooks/useRequest';
+import { useAuthenticationContext } from '../AuthenticationContext';
 
 /**
  * Prevents unccesary asyncronous validation calls by only re-xecuting when value changes and ensuring only one request is queued at a time
@@ -85,16 +86,17 @@ const SignUpSchema = Yup.object().shape({
 });
 
 export const SignUp = () => {
-    const navigate = useNavigate();
+    const { token, setToken } = useAuthenticationContext();
 
-    const request = useRequest();
-
+    if (token) {
+        return <Navigate to="/" />;
+    }
     return (
         <div className="flex flex-col items-center justify-center gap-16 h-screen">
             <span className="text-6xl">Sign Up for <span className="text-navy-300">robohub</span></span>
             <Formik
                 initialValues={{ email: '', username: '', password: '', confirmPassword: '' }}
-                onSubmit={async ({ email, username, password }, { setStatus }) => request(
+                onSubmit={async ({ email, username, password }, { setStatus }) => requestUnauthorized<TokenResponseType>(
                     '/auth/sign-up',
                     'POST',
                     {
@@ -102,8 +104,8 @@ export const SignUp = () => {
                         username,
                         password,
                     },
-                ).then(() => {
-                    navigate('/');
+                ).then(({ data }) => {
+                    setToken(data.token);
                 }).catch((error) => {
                     setStatus(getResponseErrorMessage(error)[0]);
                 })}

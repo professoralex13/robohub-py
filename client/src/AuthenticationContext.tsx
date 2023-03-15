@@ -1,29 +1,45 @@
-import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, FC, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
+import { requestAuthorized } from './hooks/useRequest';
+
+export interface Profile {
+    email: string;
+    username: string;
+    fullName?: string;
+}
 
 interface AuthenticationContextType {
     token?: string;
     setToken: (token: string) => void;
+    logout: () => Promise<void>;
 }
 
 const AuthenticationContext = createContext<AuthenticationContextType>(undefined!);
 
 export const AuthenticationProvider: FC<PropsWithChildren> = ({ children }) => {
-    const [token, setToken] = useState<string | undefined>(undefined);
-
-    useEffect(() => {
+    const [token, setToken] = useState<string | undefined>(() => {
         const token = localStorage.getItem('robohub:token');
         if (token !== null) {
-            setToken(token);
+            return token;
         }
-    }, []);
+        return undefined;
+    });
 
     const saveToken = useCallback((token: string) => {
         localStorage.setItem('robohub:token', token);
         setToken(token);
     }, []);
 
+    const logout = useCallback(async () => {
+        if (!token) {
+            return;
+        }
+        await requestAuthorized('/auth/logout', 'POST', token);
+        setToken(undefined);
+        localStorage.removeItem('robohub:token');
+    }, [token]);
+
     return (
-        <AuthenticationContext.Provider value={useMemo(() => ({ token, setToken: saveToken }), [token, saveToken])}>{children}</AuthenticationContext.Provider>
+        <AuthenticationContext.Provider value={useMemo(() => ({ token, setToken: saveToken, logout }), [token, saveToken, logout])}>{children}</AuthenticationContext.Provider>
     );
 };
 
