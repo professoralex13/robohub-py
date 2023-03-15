@@ -39,6 +39,10 @@ export const router = createBrowserRouter([{
             element: <SignIn />,
         },
         {
+            path: '/organisations',
+            element: <ProtectedRoute><OrganisationList /></ProtectedRoute>,
+        },
+        {
             path: '/',
             element: <Home />,
         },
