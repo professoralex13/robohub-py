@@ -53,7 +53,7 @@ export const SignIn = () => {
                         )}
 
                         {isSubmitting ? <Oval stroke="#64a9e9" />
-                            : <button type="submit" onClick={submitForm}>Submit</button>}
+                            : <button type="submit" onClick={submitForm} className="button">Submit</button>}
                     </Form>
                 )}
             </Formik>

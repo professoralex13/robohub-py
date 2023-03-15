@@ -47,10 +47,10 @@ const AccountSection = () => {
 
     return (
         <div className="relative">
-            <div className="flex flex-row gap-2" onClick={() => setModalOpen((state) => !state)}>
+            <button className="flex flex-row gap-2 items-center" onClick={() => setModalOpen((state) => !state)} type="button">
                 <img src={profilePicture} alt="profile" className="h-12 w-12 rounded-full" />
                 <img src={caretIcon} alt="caret" />
-            </div>
+            </button>
             {modalOpen && <AccountModal username={data.username} />}
         </div>
     );
