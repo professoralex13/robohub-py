@@ -112,11 +112,7 @@ export const SignUp = () => {
                 validationSchema={SignUpSchema}
             >
                 {({ submitForm, isSubmitting, status }) => (
-                    <Form className="
-                            flex flex-col justify-around items-center p-10 gap-5
-                            rounded-md bg-navy-800 border-slate-500 border-2 border-opacity-50
-                        "
-                    >
+                    <Form className="flex flex-col justify-around items-center p-10 gap-5 card">
                         <TextField name="email" placeholder="Email" />
                         <TextField name="username" placeholder="Username" />
                         <TextField name="password" placeholder="Password" type="password" />

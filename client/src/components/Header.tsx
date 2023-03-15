@@ -2,8 +2,7 @@ import { Search } from 'tabler-icons-react';
 import { NavLink } from 'react-router-dom';
 import { FC, PropsWithChildren } from 'react';
 import clsx from 'clsx';
-import { Oval } from 'react-loading-icons';
-import { useAsyncEffect } from '../hooks/useAsyncEffect';
+import useSWR from 'swr';
 import { useRequest } from '../hooks/useRequest';
 import { Profile, useAuthenticationContext } from '../AuthenticationContext';
 
@@ -20,11 +19,11 @@ const AccountSection = () => {
 
     const { token } = useAuthenticationContext();
 
-    const profile = useAsyncEffect(() => request<Profile>('/account/profile', 'GET').then((response) => response.data).catch(() => null), [token], undefined);
+    const { data } = useSWR('/account/profile', (url) => request<Profile>(url, 'GET').then((response) => response.data).catch(() => null), { suspense: true });
 
     // If profile is null, fetching the profile was unccesful due to a server error likely due to an expired token
     // If token is undefined it means there is no account logged in
-    if (profile === null || token === undefined) {
+    if (data === null || token === undefined) {
         return (
             <>
                 <Link to="/sign-in">Sign In</Link>
@@ -33,14 +32,9 @@ const AccountSection = () => {
         );
     }
 
-    // Login status still pending
-    if (profile === undefined) {
-        return <Oval />;
-    }
-
     return (
         <>
-            <span>{profile.username}</span>
+            <span>{data.username}</span>
             <Link to="/logout">Logout</Link>
         </>
     );

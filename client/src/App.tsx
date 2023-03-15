@@ -1,15 +1,29 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { FC, ReactElement, Suspense } from 'react';
 import { Header } from './components/Header';
 import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
 import { Home } from './pages/Home';
 import { Logout } from './pages/Logout';
+import { OrganisationList } from './pages/OrganisationList';
+import { useAuthenticationContext } from './AuthenticationContext';
+import { LoadingPage } from './components/LoadingPage';
+
+const ProtectedRoute: FC<{ children: ReactElement }> = ({ children }) => {
+    const { token } = useAuthenticationContext();
+
+    if (!token) {
+        return <Navigate to="/" />;
+    }
+
+    return children;
+};
 
 export const Root = () => (
-    <>
+    <Suspense fallback={<LoadingPage />}>
         <Header />
         <Outlet />
-    </>
+    </Suspense>
 );
 
 export const router = createBrowserRouter([{

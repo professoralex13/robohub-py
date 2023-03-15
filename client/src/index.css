@@ -10,6 +10,9 @@
     .link {
       @apply hover:text-navy-300 duration-100
     }
+    .card {
+      @apply rounded-md bg-navy-800 border-slate-500 border-2 border-opacity-50
+    }
     input[type=text], input[type=password] {
       @apply border-2 rounded-md bg-transparent px-2 py-3 text-xl duration-100
     }
