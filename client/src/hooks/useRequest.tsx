@@ -34,7 +34,7 @@ export function getResponseErrorMessage(error: any): [string, number] {
  * Automatically adds authorization headers and handles updating bearer tokens
  */
 export const useRequest = () => {
-    const { token, setToken } = useAuthenticationContext();
+    const { token, setToken, logout } = useAuthenticationContext();
 
     const request = useCallback(async <T extends {}>(url: string, method: string, data?: any): Promise<AxiosResponse<T, any>> => {
         if (!token) {
@@ -43,14 +43,21 @@ export const useRequest = () => {
             });
         }
 
-        const response = await requestAuthorized<T>(url, method, token, data);
+        const response = await requestAuthorized<T>(url, method, token, data).catch((data: AxiosError) => {
+            // If the response is a 401, we logout as the token is probably expired
+            // TODO: Maybe restrict this to specifically invalid toens
+            if (data.response?.status === 401) {
+                logout();
+            }
+            throw data;
+        });
 
         if (TokenResponseSchema.isValidSync(response.data)) {
             setToken(response.data.token);
         }
 
         return response;
-    }, [token, setToken]);
+    }, [token, setToken, logout]);
 
     return request;
 };
