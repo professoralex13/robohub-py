@@ -8,6 +8,7 @@ import { Logout } from './pages/Logout';
 import { OrganisationList } from './pages/OrganisationList';
 import { useAuthenticationContext } from './AuthenticationContext';
 import { LoadingPage } from './components/LoadingPage';
+import { CreateOrganisation } from './pages/CreateOrganisation';
 
 const ProtectedRoute: FC<{ children: ReactElement }> = ({ children }) => {
     const { token } = useAuthenticationContext();
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([{
         {
             path: '/organisations',
             element: <ProtectedRoute><OrganisationList /></ProtectedRoute>,
+        },
+        {
+            path: '/organisations/create',
+            element: <ProtectedRoute><CreateOrganisation /></ProtectedRoute>,
         },
         {
             path: '/',

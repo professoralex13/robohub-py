@@ -1,5 +1,6 @@
 import useSWR from 'swr';
 import { Settings } from 'tabler-icons-react';
+import { Link } from 'react-router-dom';
 import { useRequest } from '../hooks/useRequest';
 
 export const OrganisationList = () => {
@@ -25,8 +26,8 @@ export const OrganisationList = () => {
             </div>
 
             <div className="flex flex-row gap-24">
-                <button type="button" className="button">Create Organisation</button>
-                <button type="button" className="button">Join Organisation</button>
+                <Link to="/organisations/create" className="button">Create Organisation</Link>
+                <Link to="/organisations/join" className="button">Join Organisation</Link>
             </div>
         </div>
     );
