@@ -4,18 +4,27 @@
     html {
       @apply text-neutral-100
     }
+
     body {
       @apply bg-navy-900
     }
+
     .link {
       @apply hover:text-navy-300 duration-100
     }
+
+    .modal-item {
+      @apply px-4 py-2 text-lg hover:bg-slate-700 rounded-b-md
+    }
+
     .card {
       @apply rounded-md bg-navy-800 border-slate-500 border-2 border-opacity-50
     }
+
     input[type=text], input[type=password] {
       @apply border-2 rounded-md bg-transparent px-2 py-3 text-xl duration-100
     }
+
     .button {
       @apply bg-navy-300 text-navy-900 rounded-md px-4 py-3 text-xl duration-200 !important
     }

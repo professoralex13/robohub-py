@@ -17,10 +17,16 @@ const Link: FC<PropsWithChildren<LinkProps>> = ({ to, children }) => (
 );
 
 const AccountModal: FC<{ username: string }> = ({ username }) => (
-    <div className="card absolute right-0 top-16 flex flex-col">
-        <span className="px-2 py-0.5 border-b-2">{username}</span>
-        <NavLink to="/logout" className="px-2 py-0.5 hover:bg-slate-700 rounded-md">
-            Logout
+    <div className="card absolute right-0 top-16 flex flex-col w-max">
+        <span className="px-4 py-2 border-b-2 border-slate-700 text-lg">Username: <br /><strong>{username}</strong></span>
+        <NavLink to="/organisations" className="modal-item">
+            Your organisations
+        </NavLink>
+        <NavLink to="/settings" className="modal-item">
+            Settings
+        </NavLink>
+        <NavLink to="/logout" className="modal-item rounded-b-md border-t-2 border-slate-700">
+            Sign out
         </NavLink>
     </div>
 );
