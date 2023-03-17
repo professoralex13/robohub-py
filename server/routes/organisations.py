@@ -9,12 +9,7 @@ organisations_router = Blueprint('organisations', __name__)
 @jwt_required()
 def organisation_list():
     email = get_jwt_identity()
-    user = database.user.find_first(
-        where={'email': email}, include={'organisations': {
-            'include': {
-                'organisation': True
-            }
-        }})
+    user = database.user.find_first(where={'email': email})
     if user is None:
         return {"error": "jwt was associated with email which does not exist in the database "}, 401
 
