@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=Path(".env"))
+load_dotenv(dotenv_path=Path('.env'))
 
 
 class MissingEnvironmentVariable(Exception):
@@ -12,7 +12,7 @@ class MissingEnvironmentVariable(Exception):
     '''
 
     def __init__(self, variable_name: str) -> None:
-        super().__init__(f"{variable_name} could not be found in .env")
+        super().__init__(f'{variable_name} could not be found in .env')
 
 
 def load_from_env(key: str) -> str:
@@ -28,8 +28,8 @@ def load_from_env(key: str) -> str:
     return result
 
 
-JWT_SECRET = load_from_env("JWT_SECRET")
-SALT = load_from_env("SALT")
+JWT_SECRET = load_from_env('JWT_SECRET')
+SALT = load_from_env('SALT')
 EMAIL_KEY = 'email'
 PASSWORD_KEY = 'password'
 USERNAME_KEY = 'username'

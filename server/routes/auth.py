@@ -17,7 +17,7 @@ from server.config import SALT, EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
 
 jwt = JWTManager()
 
-auth_router = Blueprint("auth", __name__)
+auth_router = Blueprint('auth', __name__)
 
 
 @auth_router.post('/sign-up')
@@ -29,18 +29,18 @@ def sign_up():
         username: str = request.json.get(USERNAME_KEY, None)
         password: str = request.json.get(PASSWORD_KEY, None)
     else:
-        return {"error": "Content type must be application/json"}, 415
+        return {'error': 'Content type must be application/json'}, 415
 
     salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
 
     database.user.create(data={
-        "email": email,
-        "username": username,
-        "passwordHash": salted_password,
+        'email': email,
+        'username': username,
+        'passwordHash': salted_password,
     })
 
     access_token = create_access_token(identity=email)
-    response = {"token": access_token, "oogabogga": "hehe"}
+    response = {'token': access_token, 'oogabogga': 'hehe'}
 
     return response
 
@@ -53,7 +53,7 @@ def get_token():
         email: str = request.json.get(EMAIL_KEY, None)
         password: str = request.json.get(PASSWORD_KEY, None)
     else:
-        return {"error": "Content type must be application/json"}, 415
+        return {'error': 'Content type must be application/json'}, 415
 
     user = database.user.find_first(where={
         'email': email,
@@ -62,24 +62,24 @@ def get_token():
     salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
 
     if user is None or user.passwordHash != salted_password:
-        return {"error": "Wrong email or password"}, 401
+        return {'error': 'Wrong email or password'}, 401
 
     access_token = create_access_token(identity=email)
-    response = {"token": access_token}
+    response = {'token': access_token}
 
     return response
 
 
-@auth_router.post("/logout")
+@auth_router.post('/logout')
 def logout():
     '''Handles a request to logout the user by clearing jwt cookies'''
 
-    response = jsonify({"status": "logout sucessful"})
+    response = jsonify({'status': 'logout sucessful'})
     unset_jwt_cookies(response)
     return response
 
 
-@auth_router.get("/email-taken/<email>")
+@auth_router.get('/email-taken/<email>')
 def email_taken(email: str):
     '''Handles a request to see whether a given email is taken by another user'''
 
@@ -89,7 +89,7 @@ def email_taken(email: str):
     return jsonify(in_use is not None)
 
 
-@auth_router.get("/username-taken/<username>")
+@auth_router.get('/username-taken/<username>')
 def username_taken(username: str):
     '''Handles a request to see whether a given username is taken by another user'''
 
@@ -103,7 +103,7 @@ def username_taken(username: str):
 def refresh_expiring_jwts(response: Response):
     '''Refreshes bearer tokens which are half way to expiring'''
     try:
-        expiry_timestamp: float = get_jwt()["exp"]
+        expiry_timestamp: float = get_jwt()['exp']
         now = datetime.now(timezone.utc)
         target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
 
@@ -112,7 +112,7 @@ def refresh_expiring_jwts(response: Response):
             data = response.get_json()
 
             if isinstance(data, dict):
-                data["token"] = access_token
+                data['token'] = access_token
                 response.data = json.dumps(data)
 
         return response

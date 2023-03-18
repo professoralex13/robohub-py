@@ -11,14 +11,14 @@ from server.config import JWT_SECRET
 app = Flask(__name__)
 CORS(app)
 
-app.config["JWT_SECRET_KEY"] = JWT_SECRET
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config['JWT_SECRET_KEY'] = JWT_SECRET
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
 jwt.init_app(app)
 
-app.register_blueprint(auth_router, url_prefix="/auth")
-app.register_blueprint(account_router, url_prefix="/account")
-app.register_blueprint(organisations_router, url_prefix="/organisations")
+app.register_blueprint(auth_router, url_prefix='/auth')
+app.register_blueprint(account_router, url_prefix='/account')
+app.register_blueprint(organisations_router, url_prefix='/organisations')
 
 
 @app.after_request
