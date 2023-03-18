@@ -1,10 +1,12 @@
 import useSWR from 'swr';
 import { Settings } from 'tabler-icons-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRequest } from '../hooks/useRequest';
 
 export const OrganisationList = () => {
     const request = useRequest();
+
+    const navigate = useNavigate();
 
     const { data } = useSWR('/organisations/list', (url) => request<string[]>(url, 'GET'), { suspense: true });
 
@@ -16,11 +18,15 @@ export const OrganisationList = () => {
                 <span className="text-6xl">Your Organisations</span>
                 <div className="flex flex-col card p-5 gap-5 w-[33vw]">
                     {organisations.map((organisation) => (
-                        <div className="flex flex-row items-center justify-between p-2 hover:bg-slate-700 duration-100 rounded-lg cursor-pointer">
+                        <button
+                            type="button"
+                            onClick={() => navigate(`/organisations/${organisation}`)}
+                            className="flex flex-row items-center justify-between p-2 hover:bg-slate-700 duration-100 rounded-lg cursor-pointer"
+                        >
                             <span className="text-4xl">{organisation}</span>
 
                             <Settings size={30} className="hover:stroke-navy-300" onClick={() => null} />
-                        </div>
+                        </button>
                     ))}
                 </div>
             </div>

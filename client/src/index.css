@@ -14,7 +14,7 @@
     }
 
     .modal-item {
-      @apply px-4 py-2 text-lg hover:bg-slate-700 rounded-b-md
+      @apply px-4 py-2 text-lg hover:bg-slate-700
     }
 
     .card {
@@ -22,7 +22,7 @@
     }
 
     input[type=text], input[type=password] {
-      @apply border-2 rounded-md bg-transparent px-2 py-3 text-xl duration-100
+      @apply border-2 rounded-md bg-transparent px-2 py-3 text-xl duration-100 border-slate-500
     }
 
     .button {

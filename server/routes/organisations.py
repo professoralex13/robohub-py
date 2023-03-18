@@ -60,6 +60,74 @@ def create_organisation():
     return jsonify({"msg": "success"})
 
 
+@organisations_router.get('/<name>/meta')
+def organisation_meta(name: str):
+    '''
+        Gets public metadata about a given organisation
+    '''
+    organisation = database.organisation.find_first(where={'name': name})
+
+    if organisation is None:
+        return {"error": "Organisation not found"}, 404
+
+    member_count = database.organisationuser.count(where={
+        'organisationId': organisation.id,
+    })
+
+    team_count = database.team.count(where={
+        'organisationId': organisation.id,
+    })
+
+    return {
+        "name": organisation.name,
+        "description": organisation.description,
+        "location": organisation.location,
+        "memberCount": member_count,
+        "teamCount": team_count,
+    }
+
+
+@organisations_router.get('/<name>/members')
+def organisation_member_list(name: str):
+    '''
+        Gets the list of members for a given organisation
+    '''
+
+    organisation = database.organisation.find_first(where={'name': name})
+
+    if organisation is None:
+        return {"error": "Organisation not found"}, 404
+
+    organisation_user = database.organisationuser.find_many(
+        where={'organisationId': organisation.id},
+        include={
+            'user': {
+                'include': {
+                    'teams': {
+                        'include': {
+                            'team': True
+                        },
+                        'where': {
+                            'team': {
+                                'is': {
+                                    'organisationId': organisation.id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+    return [{
+                "username": user.user.username,
+                "fullName": user.user.fullName,
+                "teams": [team.team.id for team in user.user.teams if team.team is not None],
+                "isAdmin": user.isAdmin
+             }
+            for user in organisation_user if user.user is not None and user.user.teams is not None]
+
+
 @organisations_router.get("/name-taken/<name>")
 def email_taken(name: str):
     '''Handles a request to see whether a given organisation name is taken'''

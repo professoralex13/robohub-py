@@ -18,7 +18,7 @@ export const TextField: FC<FieldAttributes<any>> = ({ type = 'text', ...props })
             >
                 {props.placeholder}
             </span>
-            <Field {...props} type={type} className={clsx(hasError ? 'border-red-400' : 'border-slate-500 border-opacity-50')} />
+            <Field {...props} type={type} className={clsx(hasError ? 'border-red-400' : 'border-opacity-50')} />
             <span
                 className={clsx(
                     !hasError && 'opacity-0',
