@@ -1,6 +1,6 @@
 import useSWR from 'swr';
-import { useParams } from 'react-router-dom';
 import { Trash } from 'tabler-icons-react';
+import { FC } from 'react';
 import { useRequest } from '../../hooks/useRequest';
 
 interface MembersResponse {
@@ -10,12 +10,14 @@ interface MembersResponse {
     username: string;
 }
 
-export const Members = () => {
+interface MembersProps {
+    organisationName: string;
+}
+
+export const Members: FC<MembersProps> = ({ organisationName }) => {
     const request = useRequest();
 
-    const { name } = useParams();
-
-    const { data: { data } } = useSWR(`/organisations/${name}/members`, (url) => request<MembersResponse[]>(url, 'GET'), { suspense: true });
+    const { data: { data } } = useSWR(`/organisations/${organisationName}/members`, (url) => request<MembersResponse[]>(url, 'GET'), { suspense: true });
 
     return (
         <div className="grid grid-cols-[14rem_min-content_auto_max-content] grid-rows-[3rem_max-content] gap-3"> {/* Grid layout With a 4 column, 2 row layout */}

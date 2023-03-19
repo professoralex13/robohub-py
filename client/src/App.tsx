@@ -10,8 +10,6 @@ import { useAuthenticationContext } from './AuthenticationContext';
 import { LoadingPage } from './components/LoadingPage';
 import { OrganisationRoot } from './pages/organisation';
 import { CreateOrganisation } from './pages/CreateOrganisation';
-import { Overview } from './pages/organisation/Overview';
-import { Members } from './pages/organisation/Members';
 
 const ProtectedRoute: FC<{ children: ReactElement }> = ({ children }) => {
     const { token } = useAuthenticationContext();
@@ -33,42 +31,25 @@ export const Root = () => (
 export const router = createBrowserRouter([{
     path: '',
     element: <Root />,
-    children: [
-        {
-            path: 'sign-up',
-            element: <SignUp />,
-        },
-        {
-            path: 'sign-in',
-            element: <SignIn />,
-        },
-        {
-            path: 'organisations/:name',
-            element: <ProtectedRoute><OrganisationRoot /></ProtectedRoute>,
-            children: [{
-                path: '',
-                element: <Navigate to="overview" />,
-            }, {
-                path: 'overview',
-                element: <Overview />,
-            }, {
-                path: 'members',
-                element: <Members />,
-            }],
-        },
-        {
-            path: 'organisations',
-            element: <ProtectedRoute><OrganisationList /></ProtectedRoute>,
-        },
-        {
-            path: 'organisations/create',
-            element: <ProtectedRoute><CreateOrganisation /></ProtectedRoute>,
-        },
-        {
-            path: '',
-            element: <Home />,
-        },
-    ],
+    children: [{
+        path: 'sign-up',
+        element: <SignUp />,
+    }, {
+        path: 'sign-in',
+        element: <SignIn />,
+    }, {
+        path: 'organisations/:organisationName/*',
+        element: <ProtectedRoute><OrganisationRoot /></ProtectedRoute>,
+    }, {
+        path: 'organisations',
+        element: <ProtectedRoute><OrganisationList /></ProtectedRoute>,
+    }, {
+        path: 'organisations/create',
+        element: <ProtectedRoute><CreateOrganisation /></ProtectedRoute>,
+    }, {
+        path: '',
+        element: <Home />,
+    }],
 }, {
     path: '/logout',
     element: <Logout />,

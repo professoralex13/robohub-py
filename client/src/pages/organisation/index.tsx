@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useParams } from 'react-router-dom';
+import { NavLink, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Dashboard, Icon, List, Notes, Settings, User, Users } from 'tabler-icons-react';
 import { FC, PropsWithChildren, Suspense } from 'react';
 import clsx from 'clsx';
@@ -6,6 +6,8 @@ import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
 import teamLogo from '../../assets/TeamLogo.png';
 import { useRequest } from '../../hooks/useRequest';
+import { Overview } from './Overview';
+import { Members } from './Members';
 
 interface OrganisationMeta {
     name: string;
@@ -31,11 +33,15 @@ const HeaderLink: FC<HeaderLinkProps> = ({ symbol: Symbol, count, children, url 
 );
 
 export const OrganisationRoot = () => {
-    const { name } = useParams();
+    const { organisationName } = useParams();
+
+    if (!organisationName) {
+        throw new Error('OrganisationRoot cannot be rendered without `organisationName` as a url param');
+    }
 
     const request = useRequest();
 
-    const { data: { data: organisation } } = useSWR(`/organisations/${name}/meta`, (url) => request<OrganisationMeta>(url, 'GET'), { suspense: true });
+    const { data: { data: organisation } } = useSWR(`/organisations/${organisationName}/meta`, (url) => request<OrganisationMeta>(url, 'GET'), { suspense: true });
 
     return (
         <div className="p-2 pt-28 space-y-2">
@@ -63,7 +69,20 @@ export const OrganisationRoot = () => {
                 </div>
             )}
             >
-                <Outlet />
+                <Routes>
+                    <Route
+                        path="overview"
+                        element={<Overview />}
+                    />
+                    <Route
+                        index
+                        element={<Navigate to="overview" />}
+                    />
+                    <Route
+                        path="members"
+                        element={<Members organisationName={organisationName} />}
+                    />
+                </Routes>
             </Suspense>
         </div>
     );
