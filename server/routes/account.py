@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity  # type: ignore
 
 from server.database import database
+from server.error_handling import UnknownJwtIdentity
 
 account_router = Blueprint('account', __name__)
 
@@ -14,7 +15,7 @@ def profile():
     email = get_jwt_identity()
     user = database.user.find_first(where={'email': email})
     if user is None:
-        return {'error': 'jwt was associated with email which does not exist in the database '}, 401
+        raise UnknownJwtIdentity()
 
     return jsonify({
         'username': user.username,

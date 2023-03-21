@@ -15,6 +15,8 @@ from server.database import database
 
 from server.config import SALT, EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
 
+from server.error_handling import MediaTypeMustBeJson, InvalidCredentials
+
 jwt = JWTManager()
 
 auth_router = Blueprint('auth', __name__)
@@ -29,7 +31,7 @@ def sign_up():
         username: str = request.json.get(USERNAME_KEY, None)
         password: str = request.json.get(PASSWORD_KEY, None)
     else:
-        return {'error': 'Content type must be application/json'}, 415
+        raise MediaTypeMustBeJson()
 
     salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
 
@@ -62,7 +64,7 @@ def get_token():
     salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
 
     if user is None or user.passwordHash != salted_password:
-        return {'error': 'Wrong email or password'}, 401
+        raise InvalidCredentials()
 
     access_token = create_access_token(identity=email)
     response = {'token': access_token}
@@ -81,7 +83,7 @@ def logout():
 
 @auth_router.get('/email-taken/<email>')
 def email_taken(email: str):
-    '''Handles a request to see whether a given email is taken by another user'''
+    '''Handles a request to see whether a given email is taken'''
 
     in_use = database.user.find_first(where={
         'email': email,
@@ -91,7 +93,7 @@ def email_taken(email: str):
 
 @auth_router.get('/username-taken/<username>')
 def username_taken(username: str):
-    '''Handles a request to see whether a given username is taken by another user'''
+    '''Handles a request to see whether a given username is taken'''
 
     in_use = database.user.find_first(where={
         'username': username,
