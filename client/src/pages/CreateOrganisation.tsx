@@ -13,7 +13,7 @@ import { concurrentControledTest } from '../concurrencyControl';
 const CreateOrganisationSchema = Yup.object().shape({
     name: Yup
         .string()
-        .test('is-available', 'Name taken', concurrentControledTest(async (value) => !(await requestUnauthorized<boolean>(`/organisations/name-taken/${value}`, 'GET')).data))
+        .test('is-available', 'Name taken', concurrentControledTest(async (value) => !(await requestUnauthorized<boolean>(`/organisations/name-taken/${value}`, 'GET')).data, false))
         .required('Required'),
     description: Yup
         .string()

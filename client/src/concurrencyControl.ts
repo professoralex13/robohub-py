@@ -3,10 +3,10 @@
  * @param asyncValidate Validation callback function
  * @returns The wrapped validator function
  */
-export const concurrentControledTest = (asyncValidate: (value: string) => Promise<boolean>) => {
-    let valid = false; // Stores latest validation result
-    let previousValue = ''; // Stores previous input value that was validated
-    let currentPromise: Promise<boolean> | null = null; // Stores reference to currently executing validation promise
+export const concurrentControledTest = <I, R>(asyncValidate: (value: I) => Promise<R>, defaultValue: R) => {
+    let valid: R = defaultValue; // Stores latest validation result
+    let previousValue: I | null = null; // Stores previous input value that was validated
+    let currentPromise: Promise<R> | null = null; // Stores reference to currently executing validation promise
     const requestStack: (() => void)[] = []; // stack to store requests made while waiting for the current promise to resolve
 
     const executeRequest = async (value: any) => {
@@ -26,7 +26,7 @@ export const concurrentControledTest = (asyncValidate: (value: string) => Promis
         return response;
     };
 
-    return async (value: any) => {
+    return async (value: I) => {
         if (value === previousValue) { // if the value is the same as the previous one, return the cached result
             return valid;
         }
@@ -37,7 +37,7 @@ export const concurrentControledTest = (asyncValidate: (value: string) => Promis
             return currentPromise;
         }
 
-        return new Promise<boolean>((resolve) => {
+        return new Promise<R>((resolve) => {
             // if there is a current promise, add the resolve function to the stack
             // it will be called once the current promise is resolved
             requestStack.push(async () => {

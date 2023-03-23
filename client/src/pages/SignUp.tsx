@@ -15,14 +15,14 @@ const SignUpSchema = Yup.object().shape({
     email: Yup
         .string()
         .matches(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Not valid email')
-        .test('is-available', 'Email taken', concurrentControledTest(async (value) => !(await requestUnauthorized<boolean>(`/auth/email-taken/${value}`, 'GET')).data))
+        .test('is-available', 'Email taken', concurrentControledTest(async (value) => !(await requestUnauthorized<boolean>(`/auth/email-taken/${value}`, 'GET')).data, false))
         .required('Required'),
     username: Yup
         .string()
         .min(2, 'Too short')
         .max(15, 'Too long')
         // TODO: ensure username is valid url string before sending to prevent 404 errors, or use a post request
-        .test('is-available', 'Username taken', concurrentControledTest(async (value) => !(await requestUnauthorized<boolean>(`/auth/username-taken/${value}`, 'GET')).data))
+        .test('is-available', 'Username taken', concurrentControledTest(async (value) => !(await requestUnauthorized<boolean>(`/auth/username-taken/${value}`, 'GET')).data, false))
         .required('Required'),
     password: Yup
         .string()
