@@ -1,4 +1,5 @@
 import { createContext, FC, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
+import { useSWRConfig } from 'swr';
 import { requestAuthorized } from './hooks/useRequest';
 
 export interface Profile {
@@ -24,10 +25,19 @@ export const AuthenticationProvider: FC<PropsWithChildren> = ({ children }) => {
         return undefined;
     });
 
+    const { mutate } = useSWRConfig();
+
     const saveToken = useCallback((token: string) => {
         localStorage.setItem('robohub:token', token);
         setToken(token);
-    }, []);
+
+        // Clear all SWR cache when token changes
+        mutate(
+            () => true,
+            undefined,
+            { revalidate: false },
+        );
+    }, [mutate]);
 
     const logout = useCallback(async () => {
         if (!token) {

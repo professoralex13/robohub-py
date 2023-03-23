@@ -38,7 +38,8 @@ const AccountSection = () => {
 
     const [modalOpen, setModalOpen] = useState(false);
 
-    const { data } = useSWR('/account/profile', (url) => request<Profile>(url, 'GET').then((response) => response.data).catch(() => null), { suspense: true });
+    // Pass token into key array to force revalidation when token changes
+    const { data } = useSWR(['/account/profile', token], ([url]) => request<Profile>(url, 'GET').then((response) => response.data).catch(() => null), { suspense: true });
 
     // If profile is null, fetching the profile was unccesful due to a server error likely due to an expired token
     // If token is undefined it means there is no account logged in
