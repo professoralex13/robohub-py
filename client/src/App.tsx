@@ -24,7 +24,9 @@ const ProtectedRoute: FC<{ children: ReactElement }> = ({ children }) => {
 export const Root = () => (
     <Suspense fallback={<LoadingPage />}>
         <Header />
-        <Outlet />
+        <Suspense fallback={<LoadingPage />}>
+            <Outlet />
+        </Suspense>
     </Suspense>
 );
 
