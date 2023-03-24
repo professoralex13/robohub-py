@@ -22,3 +22,29 @@ def profile():
         'email': user.email,
         'fullName': user.fullName,
     })
+
+
+@account_router.get('/find/<query>')
+def find(query: str):
+    '''Finds a list of users whose email, username, or full name matches the query'''
+
+    users = database.user.find_many(where={'OR': [{
+            'email': {
+                'contains': query,
+            }
+        }, {
+            'fullName': {
+                'contains': query,
+            }
+        }, {
+            'username': {
+                'contains': query,
+            }
+        }
+    ]})
+
+    return jsonify([{
+        'username': user.username,
+        'email': user.email,
+        'fullName': user.fullName,
+    } for user in users])
