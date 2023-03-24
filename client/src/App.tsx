@@ -10,6 +10,7 @@ import { useAuthenticationContext } from './AuthenticationContext';
 import { LoadingPage } from './components/LoadingPage';
 import { OrganisationRoot } from './pages/organisation';
 import { CreateOrganisation } from './pages/CreateOrganisation';
+import { ProfileContextProvider } from './ProfileContext';
 
 const ProtectedRoute: FC<{ children: ReactElement }> = ({ children }) => {
     const { token } = useAuthenticationContext();
@@ -23,10 +24,12 @@ const ProtectedRoute: FC<{ children: ReactElement }> = ({ children }) => {
 
 export const Root = () => (
     <Suspense fallback={<LoadingPage />}>
-        <Header />
-        <Suspense fallback={<LoadingPage />}>
-            <Outlet />
-        </Suspense>
+        <ProfileContextProvider>
+            <Header />
+            <Suspense fallback={<LoadingPage />}>
+                <Outlet />
+            </Suspense>
+        </ProfileContextProvider>
     </Suspense>
 );
 

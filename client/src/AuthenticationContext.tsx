@@ -2,12 +2,6 @@ import { createContext, FC, PropsWithChildren, useCallback, useContext, useMemo,
 import { useSWRConfig } from 'swr';
 import { requestAuthorized } from './hooks/useRequest';
 
-export interface Profile {
-    email: string;
-    username: string;
-    fullName?: string;
-}
-
 interface AuthenticationContextType {
     token?: string;
     setToken: (token: string) => void;

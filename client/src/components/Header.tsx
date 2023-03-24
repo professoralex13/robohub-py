@@ -2,11 +2,9 @@ import { Search } from 'tabler-icons-react';
 import { NavLink } from 'react-router-dom';
 import { FC, PropsWithChildren, useState } from 'react';
 import clsx from 'clsx';
-import useSWR from 'swr';
-import { useRequest } from '../hooks/useRequest';
-import { Profile, useAuthenticationContext } from '../AuthenticationContext';
 import profilePicture from '../assets/profile_pic.png';
 import caretIcon from '../assets/Caret.svg';
+import { useProfileContext } from '../ProfileContext';
 
 interface LinkProps {
     to: string;
@@ -32,18 +30,11 @@ const AccountModal: FC<{ username: string }> = ({ username }) => (
 );
 
 const AccountSection = () => {
-    const request = useRequest();
-
-    const { token } = useAuthenticationContext();
-
     const [modalOpen, setModalOpen] = useState(false);
 
-    // Pass token into key array to force revalidation when token changes
-    const { data } = useSWR(['/account/profile', token], ([url]) => request<Profile>(url, 'GET').then((response) => response.data).catch(() => null), { suspense: true });
+    const profile = useProfileContext();
 
-    // If profile is null, fetching the profile was unccesful due to a server error likely due to an expired token
-    // If token is undefined it means there is no account logged in
-    if (data === null || token === undefined) {
+    if (!profile) {
         return (
             <>
                 <Link to="/sign-in">Sign In</Link>
@@ -58,7 +49,7 @@ const AccountSection = () => {
                 <img src={profilePicture} alt="profile" className="h-12 w-12 rounded-full" />
                 <img src={caretIcon} alt="caret" />
             </button>
-            {modalOpen && <AccountModal username={data.username} />}
+            {modalOpen && <AccountModal username={profile.username} />}
         </div>
     );
 };
