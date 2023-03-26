@@ -1,6 +1,6 @@
 '''Profile route handlers'''
 from flask import Blueprint, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity  # type: ignore
+from flask_jwt_extended import jwt_required  # type: ignore
 
 from server.database import database
 from server.routes.auth import get_compulsory_user
@@ -23,7 +23,10 @@ def profile():
 
 @account_router.get('/find/<query>')
 def find(query: str):
-    '''Finds a list of users whose email, username, or full name matches the query'''
+    '''
+        Finds a list of users whose email, username,
+        or full name matches the query
+    '''
 
     users = database.user.find_many(where={'OR': [{
             'email': {

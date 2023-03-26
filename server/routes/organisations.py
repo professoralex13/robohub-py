@@ -1,30 +1,43 @@
 '''Router for handling organisation related requets'''
+from enum import Enum
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required  # type: ignore
+from prisma.models import Organisation
 from server.database import database
 from server.error_handling import (MediaTypeMustBeJson,
-                                   OrganisationNotFound, UserNotAuthorised, 
+                                   OrganisationNotFound,
+                                   UserNotAuthorised,
                                    UserNotFound,
                                    )
+
 from server.routes.auth import get_compulsory_user, get_current_user
-from prisma.models import Organisation
-from enum import Enum
 
 organisations_router = Blueprint('organisations', __name__)
 
 
 class MembershipType(int, Enum):
+    '''
+        Represents a users membership type in an organisation
+        None means a user is not part of an organisation
+    '''
     NONE = 0
     MEMBER = 1
     ADMIN = 2
 
 
-def get_organisation(organisation_name: str, minimum_membership: MembershipType = MembershipType.MEMBER) -> tuple[Organisation, MembershipType]: 
-    '''Gets an organisation by its name from database and checks if the current user fits the minimum membership, else raise UserNotAuthorised'''
+def get_organisation(
+        organisation_name: str,
+        minimum_membership: MembershipType = MembershipType.MEMBER
+        ) -> tuple[Organisation, MembershipType]:
+    '''
+        Gets an organisation by its name from database and
+        checks if the current user fits the minimum membership,
+        else raise UserNotAuthorised
+    '''
 
     organisation = database.organisation.find_first(where={
         'name': organisation_name,
-    }, include={ 'users': { 'include': { 'user': True }} })
+    }, include={'users': {'include': {'user': True}}})
 
     if organisation is None:
         raise OrganisationNotFound()
@@ -47,11 +60,10 @@ def get_organisation(organisation_name: str, minimum_membership: MembershipType 
 
     if membership_type < minimum_membership:
         raise UserNotAuthorised()
-    
-    
+
     return (organisation, membership_type)
 
-    
+
 @organisations_router.get('/list')
 @jwt_required()
 def organisation_list():
@@ -100,13 +112,13 @@ def create_organisation():
     return jsonify({'msg': 'success'})
 
 
-@organisations_router.get('/<organisationName>/meta')
+@organisations_router.get('/<organisation_name>/meta')
 @jwt_required()
-def organisation_meta(organisationName: str):
+def organisation_meta(organisation_name: str):
     '''
         Gets public metadata about a given organisation
     '''
-    organisation, membership_type = get_organisation(organisationName)
+    organisation, membership_type = get_organisation(organisation_name)
 
     member_count = database.organisationuser.count(where={
         'organisationId': organisation.id,
@@ -126,14 +138,14 @@ def organisation_meta(organisationName: str):
     })
 
 
-@organisations_router.get('/<organisationName>/members')
+@organisations_router.get('/<organisation_name>/members')
 @jwt_required()
-def organisation_member_list(organisationName: str):
+def organisation_member_list(organisation_name: str):
     '''
         Gets the list of members for a given organisation
     '''
 
-    organisation, _ = get_organisation(organisationName)
+    organisation, _ = get_organisation(organisation_name)
 
     organisation_user = database.organisationuser.find_many(
         where={'organisationId': organisation.id},
@@ -166,9 +178,9 @@ def organisation_member_list(organisationName: str):
         if user.user is not None and user.user.teams is not None]
 
 
-@organisations_router.post('/<organisationName>/members/add/<username>')
+@organisations_router.post('/<organisation_name>/members/add/<username>')
 @jwt_required()
-def add_member(organisationName: str, username: str):  
+def add_member(organisation_name: str, username: str):
     '''
         Adds a member to the given organisation
         Ensures that current user is admin of that organisation
@@ -177,12 +189,15 @@ def add_member(organisationName: str, username: str):
 
     if user_to_add is None:
         raise UserNotFound()
-    
-    organisation, _ = get_organisation(organisationName, MembershipType.ADMIN)
-    
-    database.organisationuser.create(data={'userId': user_to_add.id, 'organisationId': organisation.id, 'isAdmin': False})
 
-    return organisation_member_list(organisationName)
+    organisation, _ = get_organisation(organisation_name, MembershipType.ADMIN)
+
+    database.organisationuser.create(data={
+        'userId': user_to_add.id,
+        'organisationId': organisation.id,
+        'isAdmin': False})
+
+    return organisation_member_list(organisation_name)
 
 
 @organisations_router.get('/name-taken/<name>')

@@ -6,7 +6,7 @@ from flask import Flask
 class UnknownJwtIdentity(exceptions.Unauthorized):
     '''Error handler for unknown JWT identity'''
 
-    # This is a 401 Unauthorized not 404 Not found so 
+    # This is a 401 Unauthorized not 404 Not found so
     # the client knows to reset authentication
     code = 401
     description = (
@@ -55,6 +55,7 @@ class OrganisationNotFound(exceptions.NotFound):
     description = (
         'Provided organisation name could not be found in database'
     )
+
 
 class UserNotFound(exceptions.NotFound):
     '''
