@@ -9,12 +9,20 @@ import { useRequest } from '../../hooks/useRequest';
 import { Overview } from './Overview';
 import { Members } from './Members';
 
+enum MembershipType {
+    None,
+    Member,
+    Admin
+}
+
 interface OrganisationMeta {
     name: string;
     description: string;
     location: string;
     memberCount: number;
     teamCount: number;
+
+    membershipType: MembershipType;
 }
 
 interface HeaderLinkProps extends PropsWithChildren {

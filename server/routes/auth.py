@@ -11,15 +11,33 @@ from flask_jwt_extended import (
     unset_jwt_cookies,
 )
 
+from prisma.models import User
+
 from server.database import database
 
 from server.config import SALT, EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
 
-from server.error_handling import MediaTypeMustBeJson, InvalidCredentials
+from server.error_handling import MediaTypeMustBeJson, InvalidCredentials, UnknownJwtIdentity
 
 jwt = JWTManager()
 
 auth_router = Blueprint('auth', __name__)
+
+
+def get_current_user(required: bool = False) -> User | None:
+    email = get_jwt_identity()
+    user = database.user.find_first(where={'email': email})
+    
+    if user is None and required:
+        raise UnknownJwtIdentity()
+    
+    return user
+
+
+def get_compulsory_user() -> User:
+    user = get_current_user(True)
+    assert user is not None
+    return user
 
 
 @auth_router.post('/sign-up')

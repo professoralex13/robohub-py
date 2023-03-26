@@ -1,23 +1,62 @@
 '''Router for handling organisation related requets'''
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import get_jwt_identity, jwt_required  # type: ignore
+from flask_jwt_extended import jwt_required  # type: ignore
 from server.database import database
-from server.error_handling import (UnknownJwtIdentity,
-                                   MediaTypeMustBeJson,
-                                   OrganisationNotFound,
+from server.error_handling import (MediaTypeMustBeJson,
+                                   OrganisationNotFound, UserNotAuthorised, 
+                                   UserNotFound,
                                    )
+from server.routes.auth import get_compulsory_user, get_current_user
+from prisma.models import Organisation
+from enum import Enum
 
 organisations_router = Blueprint('organisations', __name__)
 
 
+class MembershipType(int, Enum):
+    NONE = 0
+    MEMBER = 1
+    ADMIN = 2
+
+
+def get_organisation(organisation_name: str, minimum_membership: MembershipType = MembershipType.MEMBER) -> tuple[Organisation, MembershipType]: 
+    '''Gets an organisation by its name from database and checks if the current user fits the minimum membership, else raise UserNotAuthorised'''
+
+    organisation = database.organisation.find_first(where={
+        'name': organisation_name,
+    }, include={ 'users': { 'include': { 'user': True }} })
+
+    if organisation is None:
+        raise OrganisationNotFound()
+
+    assert organisation.users is not None
+
+    logged_in_user = get_current_user(minimum_membership > MembershipType.NONE)
+
+    membership_type: MembershipType = MembershipType.NONE
+
+    if logged_in_user is not None:
+        for membership in organisation.users:
+            assert membership.user is not None
+
+            if membership.user.id == logged_in_user.id:
+                membership_type = MembershipType.MEMBER
+
+                if membership.isAdmin:
+                    membership_type = MembershipType.ADMIN
+
+    if membership_type < minimum_membership:
+        raise UserNotAuthorised()
+    
+    
+    return (organisation, membership_type)
+
+    
 @organisations_router.get('/list')
 @jwt_required()
 def organisation_list():
     '''Fetches a list of organisations which the current user is a member of'''
-    email = get_jwt_identity()
-    user = database.user.find_first(where={'email': email})
-    if user is None:
-        raise UnknownJwtIdentity()
+    user = get_compulsory_user()
 
     organisations = database.organisation.find_many(where={
         'users': {
@@ -44,10 +83,7 @@ def create_organisation():
     else:
         raise MediaTypeMustBeJson()
 
-    email = get_jwt_identity()
-    user = database.user.find_first(where={'email': email})
-    if user is None:
-        raise UnknownJwtIdentity()
+    user = get_compulsory_user()
 
     new_organisation = database.organisation.create(data={
         'name': name,
@@ -64,15 +100,13 @@ def create_organisation():
     return jsonify({'msg': 'success'})
 
 
-@organisations_router.get('/<name>/meta')
-def organisation_meta(name: str):
+@organisations_router.get('/<organisationName>/meta')
+@jwt_required()
+def organisation_meta(organisationName: str):
     '''
         Gets public metadata about a given organisation
     '''
-    organisation = database.organisation.find_first(where={'name': name})
-
-    if organisation is None:
-        return {'error': 'Organisation not found'}, 404
+    organisation, membership_type = get_organisation(organisationName)
 
     member_count = database.organisationuser.count(where={
         'organisationId': organisation.id,
@@ -82,25 +116,24 @@ def organisation_meta(name: str):
         'organisationId': organisation.id,
     })
 
-    return {
+    return jsonify({
         'name': organisation.name,
         'description': organisation.description,
         'location': organisation.location,
         'memberCount': member_count,
         'teamCount': team_count,
-    }
+        'membershipType': membership_type,
+    })
 
 
-@organisations_router.get('/<name>/members')
-def organisation_member_list(name: str):
+@organisations_router.get('/<organisationName>/members')
+@jwt_required()
+def organisation_member_list(organisationName: str):
     '''
         Gets the list of members for a given organisation
     '''
 
-    organisation = database.organisation.find_first(where={'name': name})
-
-    if organisation is None:
-        raise OrganisationNotFound()
+    organisation, _ = get_organisation(organisationName)
 
     organisation_user = database.organisationuser.find_many(
         where={'organisationId': organisation.id},
@@ -129,13 +162,31 @@ def organisation_member_list(name: str):
         'teams': [team.team.id for team in user.user.teams
                   if team.team is not None],
         'isAdmin': user.isAdmin
-        }
-        for user in organisation_user
+        } for user in organisation_user
         if user.user is not None and user.user.teams is not None]
 
 
+@organisations_router.post('/<organisationName>/members/add/<username>')
+@jwt_required()
+def add_member(organisationName: str, username: str):  
+    '''
+        Adds a member to the given organisation
+        Ensures that current user is admin of that organisation
+    '''
+    user_to_add = database.user.find_first(where={'username': username})
+
+    if user_to_add is None:
+        raise UserNotFound()
+    
+    organisation, _ = get_organisation(organisationName, MembershipType.ADMIN)
+    
+    database.organisationuser.create(data={'userId': user_to_add.id, 'organisationId': organisation.id, 'isAdmin': False})
+
+    return organisation_member_list(organisationName)
+
+
 @organisations_router.get('/name-taken/<name>')
-def email_taken(name: str):
+def name_taken(name: str):
     '''Handles a request to see whether a given organisation name is taken'''
 
     in_use = database.organisation.find_first(where={
