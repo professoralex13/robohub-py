@@ -33,10 +33,10 @@ interface HeaderLinkProps extends PropsWithChildren {
 }
 
 const HeaderLink: FC<HeaderLinkProps> = ({ symbol: Symbol, count, children, url = children.toLowerCase() }) => (
-    <NavLink to={url} className={({ isActive }) => clsx('flex gap-2 items-center cursor-pointer group hover:border-navy-300 pb-1', isActive && 'border-b-2 -mb-0.5')}>
+    <NavLink to={url} className={({ isActive }) => clsx('hover:border-navy-300 group flex cursor-pointer items-center gap-2 pb-1', isActive && '-mb-0.5 border-b-2')}>
         <Symbol size={25} className="group-hover:stroke-navy-300" />
-        <span className="text-xl group-hover:text-navy-300">{children}</span>
-        {count !== undefined && <span className="border-2 rounded-full text-lg px-1 group-hover:text-navy-300 group-hover:border-navy-300">{count}</span>}
+        <span className="group-hover:text-navy-300 text-xl">{children}</span>
+        {count !== undefined && <span className="group-hover:text-navy-300 group-hover:border-navy-300 rounded-full border-2 px-1 text-lg">{count}</span>}
     </NavLink>
 );
 
@@ -52,11 +52,11 @@ export const OrganisationRoot = () => {
     const { data: { data: organisation } } = useSWR(`/organisations/${organisationName}/meta`, (url) => request<OrganisationMeta>(url, 'GET'), { suspense: true });
 
     return (
-        <div className="p-2 pt-28 space-y-2">
-            <div className="card grid grid-rows-2 auto-cols-max p-2 gap-3">
-                <img src={teamLogo} className="h-28 row-span-2" alt="organisation logo" />
+        <div className="space-y-2 p-2 pt-28">
+            <div className="card grid auto-cols-max grid-rows-2 gap-3 p-2">
+                <img src={teamLogo} className="row-span-2 h-28" alt="organisation logo" />
 
-                <div className="mt-auto space-x-10 col-start-2">
+                <div className="col-start-2 mt-auto space-x-10">
                     <span className="text-4xl"><strong>{organisation.name}</strong></span>
                     <span className="text-3xl">{organisation.location}</span>
                 </div>
@@ -72,7 +72,7 @@ export const OrganisationRoot = () => {
             </div>
 
             <Suspense fallback={(
-                <div className="flex justify-center items-center">
+                <div className="flex items-center justify-center">
                     <Oval />
                 </div>
             )}

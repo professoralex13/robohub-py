@@ -3,8 +3,8 @@ import { AlertCircle, AlertTriangle } from 'tabler-icons-react';
 
 export const ErrorBox: FC<PropsWithChildren> = ({ children }) => (
     <div className="
-        bg-navy-900 border-red-400 border-2 rounded-md mb-4
-        flex flex-row gap-3 items-center p-3"
+        bg-navy-900 mb-4 flex flex-row items-center
+        gap-3 rounded-md border-2 border-red-400 p-3"
     >
         <AlertCircle size={30} className="stroke-red-400" />
         <span className="text-lg text-red-400">{children}</span>
@@ -13,8 +13,8 @@ export const ErrorBox: FC<PropsWithChildren> = ({ children }) => (
 
 export const WarningBox: FC<PropsWithChildren> = ({ children }) => (
     <div className="
-    bg-navy-900 border-yellow-400 border-2 rounded-md mb-4
-        flex flex-row gap-3 items-center p-3"
+    bg-navy-900 mb-4 flex flex-row items-center
+        gap-3 rounded-md border-2 border-yellow-400 p-3"
     >
         <AlertTriangle size={30} className="stroke-yellow-400" />
         <span className="text-lg text-yellow-300">{children}</span>
@@ -23,8 +23,8 @@ export const WarningBox: FC<PropsWithChildren> = ({ children }) => (
 
 export const MessageBox: FC<PropsWithChildren> = ({ children }) => (
     <div className="
-      bg-navy-900 border-green-400 border-2 rounded-md mb-4
-        flex flex-row gap-3 items-center p-3"
+      bg-navy-900 mb-4 flex flex-row items-center
+        gap-3 rounded-md border-2 border-green-400 p-3"
     >
         <span className="text-lg text-green-300">{children}</span>
     </div>

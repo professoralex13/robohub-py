@@ -29,7 +29,7 @@ export const CreateOrganisation = () => {
     const request = useRequest();
 
     return (
-        <div className="flex flex-col items-center justify-center gap-16 h-screen">
+        <div className="flex h-screen flex-col items-center justify-center gap-16">
             <span className="text-6xl">Create Organisation</span>
             <Formik
                 initialValues={{ name: '', description: '', location: '' }}
@@ -49,7 +49,7 @@ export const CreateOrganisation = () => {
                 validationSchema={CreateOrganisationSchema}
             >
                 {({ submitForm, isSubmitting, status }) => (
-                    <Form className="flex flex-col justify-around items-center p-10 gap-5 card">
+                    <Form className="card flex flex-col items-center justify-around gap-5 p-10">
                         <TextField name="name" placeholder="Name" />
                         <TextField name="description" placeholder="Description" />
                         <TextField name="location" placeholder="Location" />

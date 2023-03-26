@@ -44,8 +44,8 @@ export const SignUp = () => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center gap-16 h-screen">
-            <span className="text-6xl animate-fadein">Sign Up for <span className="text-navy-300">robohub</span></span>
+        <div className="flex h-screen flex-col items-center justify-center gap-16">
+            <span className="animate-fadein text-6xl">Sign Up for <span className="text-navy-300">robohub</span></span>
             <Formik
                 initialValues={{ email: '', username: '', password: '', confirmPassword: '' }}
                 onSubmit={async ({ email, username, password }, { setStatus }) => requestUnauthorized<TokenResponseType>(
@@ -64,7 +64,7 @@ export const SignUp = () => {
                 validationSchema={SignUpSchema}
             >
                 {({ submitForm, isSubmitting, status }) => (
-                    <Form className="flex flex-col justify-around items-center p-10 gap-5 card animate-fadein">
+                    <Form className="card animate-fadein flex flex-col items-center justify-around gap-5 p-10">
                         <TextField name="email" placeholder="Email" />
                         <TextField name="username" placeholder="Username" />
                         <TextField name="password" placeholder="Password" type="password" />

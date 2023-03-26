@@ -13,7 +13,7 @@ export const Logout = () => {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <div className="h-screen flex flex-row items-center justify-center gap-5">
+        <div className="flex h-screen flex-row items-center justify-center gap-5">
             <span className="text-5xl">Logging you out</span> <Oval />
         </div>
     );
