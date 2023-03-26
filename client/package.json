@@ -20,6 +20,7 @@
     "react-transition-group": "^4.4.5",
     "swr": "^2.1.0",
     "tabler-icons-react": "^1.56.0",
+    "use-events": "^1.4.2",
     "yup": "^1.0.2"
   },
   "devDependencies": {
