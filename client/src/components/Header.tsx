@@ -91,7 +91,7 @@ const AccountSection = () => {
 };
 
 export const Header = () => (
-    <header className="flex items-center p-5 border-b-4 gap-16 border-navy-300 justify-between fixed top-0 w-screen">
+    <header className="flex items-center p-5 border-b-4 gap-16 border-navy-300 justify-between fixed top-0 w-screen z-10">
         <NavLink to="/" className="text-navy-300 text-5xl mr-auto">robohub</NavLink>
         <Link to="/blogs">Blogs</Link>
         <Link to="/teams">Teams</Link>
