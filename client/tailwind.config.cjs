@@ -29,6 +29,22 @@ module.exports = {
             boxShadow: {
                 button: 'inset 4px 4px 6px rgba(0, 0, 0, 0.5);',
             },
+
+            keyframes: {
+                slidedown: {
+                    '0%': { clipPath: 'inset(0 0 100% 0)' },
+                    '100%': { clipPath: 'inset(0)' },
+                },
+                fadein: {
+                    '0%': { opacity: 0, transform: 'translateY(50px)' },
+                    '100%': { opacity: 1, transform: 'translateY(0)' },
+                },
+            },
+            animation: {
+                slidedown: 'slidedown 250ms ease',
+                slidedownRev: 'slidedown 250ms ease reverse forwards', // Fill mode must be forwards so it does not reset before unmounting
+                fadein: 'fadein 250ms ease',
+            },
         },
     },
     plugins: [],

@@ -13,8 +13,8 @@ export const OrganisationList = () => {
     const organisations = data.data;
 
     return (
-        <div className="flex flex-col items-center justify-between h-screen p-5 pt-36">
-            <div className="flex flex-col items-center gap-16">
+        <div className="flex flex-col items-center justify-between h-screen p-5 pt-36 overflow-hidden">
+            <div className="flex flex-col items-center gap-16 animate-fadein">
                 <span className="text-6xl">Your Organisations</span>
                 <div className="flex flex-col card p-5 gap-5 w-[33vw]">
                     {organisations.map((organisation) => (
@@ -31,7 +31,7 @@ export const OrganisationList = () => {
                 </div>
             </div>
 
-            <div className="flex flex-row gap-24">
+            <div className="flex flex-row gap-24 animate-fadein">
                 <Link to="/organisations/create" className="button">Create Organisation</Link>
                 <Link to="/organisations/join" className="button">Join Organisation</Link>
             </div>
