@@ -1,6 +1,6 @@
 import { NavLink, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Dashboard, Icon, List, Notes, Settings, User, Users } from 'tabler-icons-react';
-import { FC, PropsWithChildren, Suspense } from 'react';
+import { FC, PropsWithChildren, Suspense, createContext, useContext } from 'react';
 import clsx from 'clsx';
 import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
@@ -9,7 +9,7 @@ import { useRequest } from 'hooks/useRequest';
 import { Overview } from './Overview';
 import { Members } from './Members';
 
-enum MembershipType {
+export enum MembershipType {
     None,
     Member,
     Admin
@@ -24,6 +24,10 @@ interface OrganisationMeta {
 
     membershipType: MembershipType;
 }
+
+const OrganistionContext = createContext<OrganisationMeta>(undefined!);
+
+export const useOrganisation = () => useContext(OrganistionContext);
 
 interface HeaderLinkProps extends PropsWithChildren {
     symbol: Icon;
@@ -52,46 +56,48 @@ export const OrganisationRoot = () => {
     const { data: { data: organisation } } = useSWR(`/organisations/${organisationName}/meta`, (url) => request<OrganisationMeta>(url, 'GET'), { suspense: true });
 
     return (
-        <div className="space-y-2 p-2 pt-28">
-            <div className="card grid auto-cols-max grid-rows-2 gap-3 p-2">
-                <img src={teamLogo} className="row-span-2 h-28" alt="organisation logo" />
+        <OrganistionContext.Provider value={organisation}>
+            <div className="space-y-2 p-2 pt-28">
+                <div className="card grid auto-cols-max grid-rows-2 gap-3 p-2">
+                    <img src={teamLogo} className="row-span-2 h-28" alt="organisation logo" />
 
-                <div className="col-start-2 mt-auto space-x-10">
-                    <span className="text-4xl"><strong>{organisation.name}</strong></span>
-                    <span className="text-3xl">{organisation.location}</span>
+                    <div className="col-start-2 mt-auto space-x-10">
+                        <span className="text-4xl"><strong>{organisation.name}</strong></span>
+                        <span className="text-3xl">{organisation.location}</span>
+                    </div>
+
+                    <div className="flex flex-row items-center gap-10 gap-y-5">
+                        <HeaderLink symbol={Dashboard}>Overview</HeaderLink>
+                        <HeaderLink symbol={Notes}>Blogs</HeaderLink>
+                        <HeaderLink symbol={List}>Parts</HeaderLink>
+                        <HeaderLink symbol={User} count={organisation.memberCount}>Members</HeaderLink>
+                        <HeaderLink symbol={Users} count={organisation.teamCount}>Teams</HeaderLink>
+                        <HeaderLink symbol={Settings}>Settings</HeaderLink>
+                    </div>
                 </div>
 
-                <div className="flex flex-row items-center gap-10 gap-y-5">
-                    <HeaderLink symbol={Dashboard}>Overview</HeaderLink>
-                    <HeaderLink symbol={Notes}>Blogs</HeaderLink>
-                    <HeaderLink symbol={List}>Parts</HeaderLink>
-                    <HeaderLink symbol={User} count={organisation.memberCount}>Members</HeaderLink>
-                    <HeaderLink symbol={Users} count={organisation.teamCount}>Teams</HeaderLink>
-                    <HeaderLink symbol={Settings}>Settings</HeaderLink>
-                </div>
+                <Suspense fallback={(
+                    <div className="flex items-center justify-center">
+                        <Oval />
+                    </div>
+                )}
+                >
+                    <Routes>
+                        <Route
+                            path="overview"
+                            element={<Overview />}
+                        />
+                        <Route
+                            index
+                            element={<Navigate to="overview" />}
+                        />
+                        <Route
+                            path="members"
+                            element={<Members />}
+                        />
+                    </Routes>
+                </Suspense>
             </div>
-
-            <Suspense fallback={(
-                <div className="flex items-center justify-center">
-                    <Oval />
-                </div>
-            )}
-            >
-                <Routes>
-                    <Route
-                        path="overview"
-                        element={<Overview />}
-                    />
-                    <Route
-                        index
-                        element={<Navigate to="overview" />}
-                    />
-                    <Route
-                        path="members"
-                        element={<Members organisationName={organisationName} />}
-                    />
-                </Routes>
-            </Suspense>
-        </div>
+        </OrganistionContext.Provider>
     );
 };

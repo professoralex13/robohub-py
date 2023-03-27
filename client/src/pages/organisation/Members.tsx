@@ -12,25 +12,27 @@ import { concurrentControledTest } from 'concurrencyControl';
 import profilePicture from 'assets/profile_pic.png';
 import { Profile, useProfileContext } from 'ProfileContext';
 import { useConfirmation } from 'ConfirmationContext';
+import { MembershipType, useOrganisation } from '.';
 
 interface UserCardProps {
     user: Profile;
     onAdded: (members: MembersResponse[]) => void;
-    organisationName: string;
 }
 
-const UserCard: FC<UserCardProps> = ({ user, onAdded, organisationName }) => {
+const UserCard: FC<UserCardProps> = ({ user, onAdded }) => {
     const request = useRequest();
 
     const confirm = useConfirmation();
 
     const [hovered, hoverProps] = useHover();
 
+    const organisation = useOrganisation();
+
     return (
         <Formik
             initialValues={{}}
             onSubmit={async () => {
-                const { data } = await request<MembersResponse[]>(`/organisations/${organisationName}/members/add/${user.username}`, 'POST');
+                const { data } = await request<MembersResponse[]>(`/organisations/${organisation.name}/members/add/${user.username}`, 'POST');
                 onAdded(data);
             }}
         >
@@ -38,7 +40,7 @@ const UserCard: FC<UserCardProps> = ({ user, onAdded, organisationName }) => {
                 <button
                     className="relative h-max w-full cursor-pointer"
                     onClick={async () => {
-                        if (await confirm(<span>Are you sure you want to add <strong>{user.username}</strong> to <strong>{organisationName}</strong></span>)) {
+                        if (await confirm(<span>Are you sure you want to add <strong>{user.username}</strong> to <strong>{organisation.name}</strong></span>)) {
                             submitForm();
                         }
                     }}
@@ -77,13 +79,12 @@ const callback = concurrentControledTest(async (query: string) => {
 }, []);
 
 interface InviteMembersDialogProps {
-    organisationName: string;
     existingMembers: MembersResponse[];
     onUpdate: (members: MembersResponse[]) => void;
     open: boolean;
 }
 
-export const InviteMembersDialog: FC<InviteMembersDialogProps> = ({ organisationName, existingMembers, onUpdate, open }) => {
+export const InviteMembersDialog: FC<InviteMembersDialogProps> = ({ existingMembers, onUpdate, open }) => {
     const [value, setValue] = useState('');
 
     const { data } = useSWR([value], ([query]) => callback(query));
@@ -108,7 +109,7 @@ export const InviteMembersDialog: FC<InviteMembersDialogProps> = ({ organisation
                     {/* List must be hidden when length zero so space-y-3 does not create empty space */}
                     <div className={clsx('flex max-h-[50vh] flex-col items-center gap-3 overflow-y-auto', filteredMembers?.length === 0 && 'hidden')}>
                         {filteredMembers === undefined ? <Oval /> : filteredMembers.map((user) => (
-                            <UserCard key={user.username} user={user} onAdded={onUpdate} organisationName={organisationName} />
+                            <UserCard key={user.username} user={user} onAdded={onUpdate} />
                         ))}
                     </div>
                 </div>
@@ -120,25 +121,28 @@ export const InviteMembersDialog: FC<InviteMembersDialogProps> = ({ organisation
 interface MemberRowProps {
     member: MembersResponse;
     onRemoved: (members: MembersResponse[]) => void;
-    organisationName: string;
 }
 
-export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved, organisationName }) => {
+export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved }) => {
     const request = useRequest();
 
     const profile = useProfileContext();
 
     const confirm = useConfirmation();
 
+    const organisation = useOrganisation();
+
     if (!profile) {
         return <Navigate to="/" />;
     }
+
+    const showRemoveButton = organisation.membershipType >= MembershipType.Admin && profile.username !== member.username;
 
     return (
         <Formik
             initialValues={{}}
             onSubmit={async () => {
-                const { data } = await request<MembersResponse[]>(`/organisations/${organisationName}/members/remove/${member.username}`, 'POST');
+                const { data } = await request<MembersResponse[]>(`/organisations/${organisation.name}/members/remove/${member.username}`, 'POST');
                 onRemoved(data);
             }}
         >
@@ -147,11 +151,11 @@ export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved, organisationN
                     <input type="checkbox" className="m-auto" />
                     <span className="text-xl text-slate-400">{member.username}</span>
                     <span className="text-lg text-slate-400">Teams: {member.teams.length}</span>
-                    {profile.username !== member.username && (isSubmitting ? <Oval className="my-auto ml-auto h-7" /> : (
+                    {showRemoveButton && (isSubmitting ? <Oval className="my-auto ml-auto h-7" /> : (
                         <Trash
                             className="my-auto ml-auto cursor-pointer stroke-slate-400 duration-200 hover:stroke-red-500"
                             onClick={async () => {
-                                if (await confirm(<span>Are you sure you want to remove <strong>{member.username}</strong>f from <strong>{organisationName}</strong></span>)) {
+                                if (await confirm(<span>Are you sure you want to remove <strong>{member.username}</strong>f from <strong>{organisation.name}</strong></span>)) {
                                     submitForm();
                                 }
                             }}
@@ -170,16 +174,12 @@ interface MembersResponse {
     username: string;
 }
 
-interface MembersProps {
-    organisationName: string;
-}
-
-// TODO: Make the current organisation a context to avoid passing through many prop layers
-
-export const Members: FC<MembersProps> = ({ organisationName }) => {
+export const Members = () => {
     const request = useRequest();
 
-    const { data, mutate } = useSWR(`/organisations/${organisationName}/members`, async (url) => (await request<MembersResponse[]>(url, 'GET')).data, { suspense: true });
+    const organisation = useOrganisation();
+
+    const { data, mutate } = useSWR(`/organisations/${organisation.name}/members`, async (url) => (await request<MembersResponse[]>(url, 'GET')).data, { suspense: true });
 
     const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
@@ -197,20 +197,21 @@ export const Members: FC<MembersProps> = ({ organisationName }) => {
 
             {/* Input field for filtering the names of members */}
             <input placeholder="Find Members" type="text" className="row-span-1" />
-            <div className="relative col-start-4">
-                <button type="button" className="button " onClick={() => setInviteDialogOpen((s) => !s)}>
-                    Invite Members
-                </button>
-                <InviteMembersDialog
-                    organisationName={organisationName}
-                    existingMembers={data}
-                    onUpdate={(members) => {
-                        setInviteDialogOpen(false);
-                        mutate(members);
-                    }}
-                    open={inviteDialogOpen}
-                />
-            </div>
+            {organisation.membershipType >= MembershipType.Admin && (
+                <div className="relative col-start-4">
+                    <button type="button" className="button " onClick={() => setInviteDialogOpen((s) => !s)}>
+                        Invite Members
+                    </button>
+                    <InviteMembersDialog
+                        existingMembers={data}
+                        onUpdate={(members) => {
+                            setInviteDialogOpen(false);
+                            mutate(members);
+                        }}
+                        open={inviteDialogOpen}
+                    />
+                </div>
+            )}
 
             {/* Card showing list of all members in organisation */}
             <div className="card col-span-3 col-start-2 row-start-2">
@@ -220,7 +221,7 @@ export const Members: FC<MembersProps> = ({ organisationName }) => {
                     <span className="text-slate-300">Members</span>
                 </div>
                 {data.map((member) => (
-                    <MemberRow member={member} onRemoved={mutate} organisationName={organisationName} />
+                    <MemberRow member={member} onRemoved={mutate} />
                 ))}
             </div>
         </div>
