@@ -155,7 +155,7 @@ export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved }) => {
                         <Trash
                             className="my-auto ml-auto cursor-pointer stroke-slate-400 duration-200 hover:stroke-red-500"
                             onClick={async () => {
-                                if (await confirm(<span>Are you sure you want to remove <strong>{member.username}</strong>f from <strong>{organisation.name}</strong></span>)) {
+                                if (await confirm(<span>Are you sure you want to remove <strong>{member.username}</strong> from <strong>{organisation.name}</strong></span>)) {
                                     submitForm();
                                 }
                             }}

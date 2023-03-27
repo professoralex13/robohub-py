@@ -1,11 +1,12 @@
 import { Search } from 'tabler-icons-react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { FC, PropsWithChildren, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Transition } from 'react-transition-group';
 import profilePicture from 'assets/profile_pic.png';
 import caretIcon from 'assets/Caret.svg';
 import { useProfileContext } from 'ProfileContext';
+import { useAuthenticationContext } from 'AuthenticationContext';
 
 interface LinkProps {
     to: string;
@@ -17,6 +18,10 @@ const Link: FC<PropsWithChildren<LinkProps>> = ({ to, children }) => (
 
 const AccountModal: FC<{ username: string, open: boolean }> = ({ username, open }) => {
     const ref = useRef(null);
+
+    const { logout } = useAuthenticationContext();
+
+    const navigate = useNavigate();
 
     return (
         <Transition in={open} nodeRef={ref} timeout={250} unmountOnExit>
@@ -36,9 +41,10 @@ const AccountModal: FC<{ username: string, open: boolean }> = ({ username, open 
                     <NavLink to="/settings" className="modal-item">
                         Settings
                     </NavLink>
-                    <NavLink to="/logout" className="modal-item rounded-b-md border-t-2 border-slate-700">
+
+                    <button onClick={() => logout().finally(() => navigate('/'))} type="button" className="modal-item rounded-b-md border-t-2 border-slate-700 text-left">
                         Sign out
-                    </NavLink>
+                    </button>
                 </div>
             )}
         </Transition>

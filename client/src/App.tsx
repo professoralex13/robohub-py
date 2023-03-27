@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { FC, ReactElement, Suspense } from 'react';
+import { ErrorPage } from 'pages/Error';
 import { Header } from './components/Header';
 import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
 import { Home } from './pages/Home';
-import { Logout } from './pages/Logout';
 import { OrganisationList } from './pages/OrganisationList';
 import { useAuthenticationContext } from './AuthenticationContext';
 import { LoadingPage } from './components/LoadingPage';
@@ -39,6 +39,7 @@ export const Root = () => (
 export const router = createBrowserRouter([{
     path: '',
     element: <Root />,
+    errorElement: <ErrorPage />,
     children: [{
         path: 'sign-up',
         element: <SignUp />,
@@ -55,10 +56,7 @@ export const router = createBrowserRouter([{
         path: 'organisations/create',
         element: <ProtectedRoute><CreateOrganisation /></ProtectedRoute>,
     }, {
-        path: '',
+        index: true,
         element: <Home />,
     }],
-}, {
-    path: '/logout',
-    element: <Logout />,
 }]);
