@@ -3,9 +3,9 @@ import { NavLink } from 'react-router-dom';
 import { FC, PropsWithChildren, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { Transition } from 'react-transition-group';
-import profilePicture from '../assets/profile_pic.png';
-import caretIcon from '../assets/Caret.svg';
-import { useProfileContext } from '../ProfileContext';
+import profilePicture from 'assets/profile_pic.png';
+import caretIcon from 'assets/Caret.svg';
+import { useProfileContext } from 'ProfileContext';
 
 interface LinkProps {
     to: string;

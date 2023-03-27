@@ -7,11 +7,11 @@ import { Formik } from 'formik';
 import { Transition } from 'react-transition-group';
 import { useHover } from 'use-events';
 import { Navigate } from 'react-router-dom';
-import { requestUnauthorized, useRequest } from '../../hooks/useRequest';
-import { concurrentControledTest } from '../../concurrencyControl';
-import profilePicture from '../../assets/profile_pic.png';
-import { Profile, useProfileContext } from '../../ProfileContext';
-import { useConfirmation } from '../../ConfirmationContext';
+import { requestUnauthorized, useRequest } from 'hooks/useRequest';
+import { concurrentControledTest } from 'concurrencyControl';
+import profilePicture from 'assets/profile_pic.png';
+import { Profile, useProfileContext } from 'ProfileContext';
+import { useConfirmation } from 'ConfirmationContext';
 
 interface UserCardProps {
     user: Profile;

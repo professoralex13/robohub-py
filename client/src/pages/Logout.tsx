@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Oval } from 'react-loading-icons';
 import { useEffect } from 'react';
-import { useAuthenticationContext } from '../AuthenticationContext';
+import { useAuthenticationContext } from 'AuthenticationContext';
 
 export const Logout = () => {
     const { logout } = useAuthenticationContext();

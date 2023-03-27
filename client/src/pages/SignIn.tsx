@@ -2,10 +2,10 @@ import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { Oval } from 'react-loading-icons';
 import { Navigate } from 'react-router-dom';
-import { TextField } from '../components/Form';
-import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from '../hooks/useRequest';
-import { ErrorBox } from '../components/Notication';
-import { useAuthenticationContext } from '../AuthenticationContext';
+import { ErrorBox } from 'components/Notication';
+import { TextField } from 'components/Form';
+import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from 'hooks/useRequest';
+import { useAuthenticationContext } from 'AuthenticationContext';
 
 const SignInSchema = Yup.object().shape({
     emailUsername: Yup.string().required('Required'),

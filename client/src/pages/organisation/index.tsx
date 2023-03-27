@@ -4,8 +4,8 @@ import { FC, PropsWithChildren, Suspense } from 'react';
 import clsx from 'clsx';
 import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
-import teamLogo from '../../assets/TeamLogo.png';
-import { useRequest } from '../../hooks/useRequest';
+import teamLogo from 'assets/TeamLogo.png';
+import { useRequest } from 'hooks/useRequest';
 import { Overview } from './Overview';
 import { Members } from './Members';
 

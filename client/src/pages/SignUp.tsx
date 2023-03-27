@@ -2,11 +2,11 @@ import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { Oval } from 'react-loading-icons';
 import { Navigate } from 'react-router';
-import { TextField } from '../components/Form';
-import { ErrorBox } from '../components/Notication';
-import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from '../hooks/useRequest';
-import { useAuthenticationContext } from '../AuthenticationContext';
-import { concurrentControledTest } from '../concurrencyControl';
+import { TextField } from 'components/Form';
+import { ErrorBox } from 'components/Notication';
+import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from 'hooks/useRequest';
+import { useAuthenticationContext } from 'AuthenticationContext';
+import { concurrentControledTest } from 'concurrencyControl';
 
 /**
  * Schema for validating the SignUp page fields

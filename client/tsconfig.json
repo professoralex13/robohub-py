@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
+    "baseUrl": "./src",
     "lib": [
       "DOM",
       "DOM.Iterable",

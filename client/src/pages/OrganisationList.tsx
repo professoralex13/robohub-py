@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import { Settings } from 'tabler-icons-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useRequest } from '../hooks/useRequest';
+import { useRequest } from 'hooks/useRequest';
 
 export const OrganisationList = () => {
     const request = useRequest();
