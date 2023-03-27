@@ -26,14 +26,14 @@ export const ConfirmationDialog: FC<PropsWithChildren<ConfirmationDialogProps>> 
                     id="dialog-background"
                     className={clsx(
                         'absolute z-20 flex h-screen w-screen flex-col items-center justify-end overflow-hidden p-10 backdrop-blur-md',
-                        state === 'entering' && 'animate-fadeinOpacity',
-                        state === 'exiting' && 'animate-fadeoutOpacity',
+                        state === 'entering' && 'animate-fadeIn',
+                        state === 'exiting' && 'animate-fadeInRev',
                     )}
                 >
                     <div className={clsx(
                         'card flex flex-col items-center gap-5 p-3',
-                        state === 'entering' && 'animate-fadein',
-                        state === 'exiting' && 'animate-fadeout',
+                        state === 'entering' && 'animate-fadeUp',
+                        state === 'exiting' && 'animate-fadeUpRev',
                     )}
                     >
                         {children}

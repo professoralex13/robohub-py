@@ -30,8 +30,8 @@ const AccountModal: FC<{ username: string, open: boolean }> = ({ username, open 
                     ref={ref}
                     className={clsx(
                         'card absolute right-0 top-16 flex w-max flex-col',
-                        state === 'entering' && 'animate-slidedown',
-                        state === 'exiting' && 'animate-slidedownRev',
+                        state === 'entering' && 'animate-expandDown',
+                        state === 'exiting' && 'animate-expandDownRev',
                     )}
                 >
                     <span className="border-b-2 border-slate-700 px-4 py-2 text-lg">Username: <br /><strong>{username}</strong></span>

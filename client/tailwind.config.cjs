@@ -29,29 +29,27 @@ module.exports = {
             boxShadow: {
                 button: 'inset 4px 4px 6px rgba(0, 0, 0, 0.5);',
             },
-
-            // TODO: standardise the naming of animations
             keyframes: {
-                slidedown: {
+                expandDown: {
                     '0%': { clipPath: 'inset(0 0 100% 0)' },
                     '100%': { clipPath: 'inset(0)' },
                 },
-                fadein: {
+                fadeUp: {
                     '0%': { opacity: 0, transform: 'translateY(50px)' },
                     '100%': { opacity: 1, transform: 'translateY(0)' },
                 },
-                fadeinOpacity: {
+                fadeIn: {
                     '0%': { opacity: 0 },
                     '100%': { opacity: 1 },
                 },
             },
             animation: {
-                slidedown: 'slidedown 250ms ease',
-                slidedownRev: 'slidedown 250ms ease reverse forwards', // Fill mode must be forwards so it does not reset before unmounting
-                fadein: 'fadein 250ms ease',
-                fadeout: 'fadein 250ms ease reverse forwards',
-                fadeinOpacity: 'fadeinOpacity 250ms ease',
-                fadeoutOpacity: 'fadeinOpacity 250ms ease reverse forwards',
+                expandDown: 'expandDown 250ms ease',
+                expandDownRev: 'expandDown 250ms ease reverse forwards', // Fill mode must be forwards so it does not reset before unmounting
+                fadeUp: 'fadeUp 250ms ease',
+                fadeUpRev: 'fadeUp 250ms ease reverse forwards',
+                fadeIn: 'fadeIn 250ms ease',
+                fadeInRev: 'fadeIn 250ms ease reverse forwards',
             },
         },
     },

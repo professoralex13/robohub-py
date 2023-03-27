@@ -99,8 +99,8 @@ export const InviteMembersDialog: FC<InviteMembersDialogProps> = ({ existingMemb
                 <div
                     className={clsx(
                         'card absolute right-0 top-14 w-max space-y-3 p-5',
-                        state === 'entering' && 'animate-slidedown',
-                        state === 'exiting' && 'animate-slidedownRev',
+                        state === 'entering' && 'animate-expandDown',
+                        state === 'exiting' && 'animate-expandDownRev',
                     )}
                     ref={ref}
                 >

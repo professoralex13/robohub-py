@@ -21,7 +21,7 @@ export const SignIn = () => {
 
     return (
         <div className="flex h-screen flex-col items-center justify-center gap-16">
-            <span className="animate-fadein text-6xl">Sign In to <span className="text-navy-300">robohub</span></span>
+            <span className="animate-fadeUp text-6xl">Sign In to <span className="text-navy-300">robohub</span></span>
             <Formik
                 initialValues={{ emailUsername: '', password: '' }}
                 onSubmit={async ({ emailUsername, password }, { setStatus }) => requestUnauthorized<TokenResponseType>(
@@ -44,7 +44,7 @@ export const SignIn = () => {
                 validationSchema={SignInSchema}
             >
                 {({ submitForm, isSubmitting, status }) => (
-                    <Form className="card animate-fadein flex flex-col items-center justify-around gap-5 p-10">
+                    <Form className="card animate-fadeUp flex flex-col items-center justify-around gap-5 p-10">
                         <TextField name="emailUsername" placeholder="Email / Username" />
                         <TextField name="password" placeholder="Password" type="password" />
 

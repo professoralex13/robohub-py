@@ -14,7 +14,7 @@ export const OrganisationList = () => {
 
     return (
         <div className="flex h-screen flex-col items-center justify-between overflow-hidden p-5 pt-36">
-            <div className="animate-fadein flex flex-col items-center gap-16">
+            <div className="animate-fadeUp flex flex-col items-center gap-16">
                 <span className="text-6xl">Your Organisations</span>
                 <div className="card flex w-[33vw] flex-col gap-5 p-5">
                     {organisations.map((organisation) => (
@@ -34,7 +34,7 @@ export const OrganisationList = () => {
                 </div>
             </div>
 
-            <div className="animate-fadein flex flex-row gap-24">
+            <div className="animate-fadeUp flex flex-row gap-24">
                 <Link to="/organisations/create" className="button">Create Organisation</Link>
                 <Link to="/organisations/join" className="button">Join Organisation</Link>
             </div>
