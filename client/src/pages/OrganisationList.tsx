@@ -28,6 +28,9 @@ export const OrganisationList = () => {
                             <Settings size={30} className="hover:stroke-navy-300" onClick={() => null} />
                         </button>
                     ))}
+                    {organisations.length === 0 && (
+                        <span className="text-center text-3xl">You are not a member of any organisations</span>
+                    )}
                 </div>
             </div>
 

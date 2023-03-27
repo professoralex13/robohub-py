@@ -200,6 +200,30 @@ def add_member(organisation_name: str, username: str):
     return organisation_member_list(organisation_name)
 
 
+@organisations_router.post('/<organisation_name>/members/remove/<username>')
+@jwt_required()
+def remove_member(organisation_name: str, username: str):
+    '''
+        Removes a member from the given organisation
+        Ensures that current user is admin of that organisation
+    '''
+    user_to_remove = database.user.find_first(where={'username': username})
+
+    if user_to_remove is None:
+        raise UserNotFound()
+
+    organisation, _ = get_organisation(organisation_name, MembershipType.ADMIN)
+
+    database.organisationuser.delete(where={
+        'userId_organisationId': {
+            'userId': user_to_remove.id,
+            'organisationId': organisation.id,
+        }
+    })
+
+    return organisation_member_list(organisation_name)
+
+
 @organisations_router.get('/name-taken/<name>')
 def name_taken(name: str):
     '''Handles a request to see whether a given organisation name is taken'''

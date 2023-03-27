@@ -6,10 +6,11 @@ import clsx from 'clsx';
 import { Formik } from 'formik';
 import { Transition } from 'react-transition-group';
 import { useHover } from 'use-events';
+import { Navigate } from 'react-router-dom';
 import { requestUnauthorized, useRequest } from '../../hooks/useRequest';
 import { concurrentControledTest } from '../../concurrencyControl';
 import profilePicture from '../../assets/profile_pic.png';
-import { Profile } from '../../ProfileContext';
+import { Profile, useProfileContext } from '../../ProfileContext';
 import { useConfirmation } from '../../ConfirmationContext';
 
 interface UserCardProps {
@@ -116,6 +117,52 @@ export const InviteMembersDialog: FC<InviteMembersDialogProps> = ({ organisation
     );
 };
 
+interface MemberRowProps {
+    member: MembersResponse;
+    onRemoved: (members: MembersResponse[]) => void;
+    organisationName: string;
+}
+
+export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved, organisationName }) => {
+    const request = useRequest();
+
+    const profile = useProfileContext();
+
+    const confirm = useConfirmation();
+
+    if (!profile) {
+        return <Navigate to="/" />;
+    }
+
+    return (
+        <Formik
+            initialValues={{}}
+            onSubmit={async () => {
+                const { data } = await request<MembersResponse[]>(`/organisations/${organisationName}/members/remove/${member.username}`, 'POST');
+                onRemoved(data);
+            }}
+        >
+            {({ submitForm, isSubmitting }) => (
+                <div className="grid grid-cols-[max-content_auto_max-content_5%] gap-3 p-3" key={member.username}>
+                    <input type="checkbox" className="m-auto" />
+                    <span className="text-xl text-slate-400">{member.username}</span>
+                    <span className="text-lg text-slate-400">Teams: {member.teams.length}</span>
+                    {profile.username !== member.username && (isSubmitting ? <Oval className="my-auto ml-auto h-7" /> : (
+                        <Trash
+                            className="my-auto ml-auto cursor-pointer stroke-slate-400 duration-200 hover:stroke-red-500"
+                            onClick={async () => {
+                                if (await confirm(<span>Are you sure you want to remove <strong>{member.username}</strong>f from <strong>{organisationName}</strong></span>)) {
+                                    submitForm();
+                                }
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
+        </Formik>
+    );
+};
+
 interface MembersResponse {
     fullName: string | null;
     isAdmin: boolean;
@@ -173,12 +220,7 @@ export const Members: FC<MembersProps> = ({ organisationName }) => {
                     <span className="text-slate-300">Members</span>
                 </div>
                 {data.map((member) => (
-                    <div className="grid grid-cols-[max-content_auto_max-content_max-content] gap-3 p-3" key={member.username}>
-                        <input type="checkbox" className="m-auto" />
-                        <span className="text-xl text-slate-400">{member.username}</span>
-                        <span className="text-lg text-slate-400">Teams: {member.teams.length}</span>
-                        <Trash className="hover: m-auto stroke-slate-400" />
-                    </div>
+                    <MemberRow member={member} onRemoved={mutate} organisationName={organisationName} />
                 ))}
             </div>
         </div>

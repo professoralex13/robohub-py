@@ -38,8 +38,8 @@ export const ConfirmationDialog: FC<PropsWithChildren<ConfirmationDialogProps>> 
                     >
                         {children}
                         <div className="flex w-full justify-between gap-5">
-                            <CircleCheck size={40} className="duration-200 hover:stroke-green-500" onClick={() => select(true)} />
-                            <CircleX size={40} className="duration-200 hover:stroke-red-500" onClick={() => select(false)} />
+                            <CircleX size={40} className="cursor-pointer duration-200 hover:stroke-red-500" onClick={() => select(false)} />
+                            <CircleCheck size={40} className="cursor-pointer duration-200 hover:stroke-green-500" onClick={() => select(true)} />
                         </div>
                     </div>
                 </div>

@@ -30,7 +30,7 @@ export const CreateOrganisation = () => {
 
     return (
         <div className="flex h-screen flex-col items-center justify-center gap-16">
-            <span className="text-6xl">Create Organisation</span>
+            <span className="animate-fadein text-6xl">Create Organisation</span>
             <Formik
                 initialValues={{ name: '', description: '', location: '' }}
                 onSubmit={async ({ name, description, location }, { setStatus }) => request(
@@ -42,14 +42,14 @@ export const CreateOrganisation = () => {
                         location,
                     },
                 ).then(() => {
-                    navigate('/');
+                    navigate(`/organisations/${name}`);
                 }).catch((error) => {
                     setStatus(getResponseErrorMessage(error)[0]);
                 })}
                 validationSchema={CreateOrganisationSchema}
             >
                 {({ submitForm, isSubmitting, status }) => (
-                    <Form className="card flex flex-col items-center justify-around gap-5 p-10">
+                    <Form className="card animate-fadein flex flex-col items-center justify-around gap-5 p-10">
                         <TextField name="name" placeholder="Name" />
                         <TextField name="description" placeholder="Description" />
                         <TextField name="location" placeholder="Location" />
