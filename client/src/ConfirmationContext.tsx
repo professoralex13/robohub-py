@@ -22,6 +22,7 @@ export const ConfirmationDialog: FC<PropsWithChildren<ConfirmationDialogProps>> 
     return (
         <Transition in={shown} timeout={250} onExited={() => onExited(selection ?? false)} unmountOnExit appear>
             {(state) => (
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                 <div
                     id="dialog-background"
                     className={clsx(
@@ -29,15 +30,21 @@ export const ConfirmationDialog: FC<PropsWithChildren<ConfirmationDialogProps>> 
                         state === 'entering' && 'animate-fadeIn',
                         state === 'exiting' && 'animate-fadeInRev',
                     )}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            select(false);
+                        }
+                    }}
                 >
                     <div className={clsx(
-                        'card flex flex-col items-center gap-5 p-3',
+                        'card flex flex-col items-center gap-2 p-3',
                         state === 'entering' && 'animate-fadeUp',
                         state === 'exiting' && 'animate-fadeUpRev',
                     )}
                     >
-                        {children}
-                        <div className="flex w-full justify-between gap-5">
+                        <span className="w-full text-left text-2xl">Confirm</span>
+                        <span className="text-lg">{children}</span>
+                        <div className="flex w-full justify-between">
                             <CircleX size={40} className="cursor-pointer duration-200 hover:stroke-red-500" onClick={() => select(false)} />
                             <CircleCheck size={40} className="cursor-pointer duration-200 hover:stroke-green-500" onClick={() => select(true)} />
                         </div>
