@@ -1,10 +1,9 @@
 import useSWR from 'swr';
 import { Trash } from 'tabler-icons-react';
-import { FC, useRef, useState } from 'react';
+import { FC, useState } from 'react';
 import { Oval } from 'react-loading-icons';
 import clsx from 'clsx';
 import { Formik } from 'formik';
-import { Transition } from 'react-transition-group';
 import { useHover } from 'use-events';
 import { Navigate } from 'react-router-dom';
 import { requestUnauthorized, useRequest } from 'hooks/useRequest';
@@ -12,6 +11,7 @@ import { concurrentControledTest } from 'concurrencyControl';
 import profilePicture from 'assets/profile_pic.png';
 import { Profile, useProfileContext } from 'ProfileContext';
 import { useConfirmation } from 'ConfirmationContext';
+import { AnimatePresence, motion } from 'framer-motion';
 import { MembershipType, useOrganisation } from '.';
 
 interface UserCardProps {
@@ -81,40 +81,31 @@ const callback = concurrentControledTest(async (query: string) => {
 interface InviteMembersDialogProps {
     existingMembers: MembersResponse[];
     onUpdate: (members: MembersResponse[]) => void;
-    open: boolean;
 }
 
-export const InviteMembersDialog: FC<InviteMembersDialogProps> = ({ existingMembers, onUpdate, open }) => {
+export const InviteMembersDialog: FC<InviteMembersDialogProps> = ({ existingMembers, onUpdate }) => {
     const [value, setValue] = useState('');
 
     const { data } = useSWR([value], ([query]) => callback(query));
 
     const filteredMembers = data?.filter((member) => !existingMembers.find((member1) => member1.username === member.username));
 
-    const ref = useRef(null);
-
     return (
-        <Transition in={open} nodeRef={ref} timeout={250} unmountOnExit>
-            {(state) => (
-                <div
-                    className={clsx(
-                        'card absolute right-0 top-14 w-max space-y-3 p-5',
-                        state === 'entering' && 'animate-expandDown',
-                        state === 'exiting' && 'animate-expandDownRev',
-                    )}
-                    ref={ref}
-                >
-                    <input type="text" placeholder="email/username/full name" value={value} onChange={(e) => setValue(e.target.value)} />
+        <motion.div
+            className="card absolute right-0 top-14 w-max space-y-3 p-5"
+            initial={{ clipPath: 'inset(0 0 100% 0)' }}
+            animate={{ clipPath: 'inset(0)' }}
+            exit={{ clipPath: 'inset(0 0 100% 0)' }}
+        >
+            <input type="text" placeholder="email/username/full name" value={value} onChange={(e) => setValue(e.target.value)} />
 
-                    {/* List must be hidden when length zero so space-y-3 does not create empty space */}
-                    <div className={clsx('flex max-h-[50vh] flex-col items-center gap-3 overflow-y-auto', filteredMembers?.length === 0 && 'hidden')}>
-                        {filteredMembers === undefined ? <Oval /> : filteredMembers.map((user) => (
-                            <UserCard key={user.username} user={user} onAdded={onUpdate} />
-                        ))}
-                    </div>
-                </div>
-            )}
-        </Transition>
+            {/* List must be hidden when length zero so space-y-3 does not create empty space */}
+            <div className={clsx('flex max-h-[50vh] flex-col items-center gap-3 overflow-y-auto', filteredMembers?.length === 0 && 'hidden')}>
+                {filteredMembers === undefined ? <Oval /> : filteredMembers.map((user) => (
+                    <UserCard key={user.username} user={user} onAdded={onUpdate} />
+                ))}
+            </div>
+        </motion.div>
     );
 };
 
@@ -147,7 +138,12 @@ export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved }) => {
             }}
         >
             {({ submitForm, isSubmitting }) => (
-                <div className="grid grid-cols-[max-content_auto_max-content_5%] gap-3 p-3" key={member.username}>
+                <motion.div
+                    className="grid grid-cols-[max-content_auto_max-content_5%] gap-3 overflow-hidden p-3"
+                    initial={{ opacity: 0, maxHeight: 0 }}
+                    animate={{ opacity: 1, maxHeight: 56 }}
+                    exit={{ opacity: 0, maxHeight: 0 }}
+                >
                     <input type="checkbox" className="m-auto" />
                     <span className="text-xl text-slate-400">{member.username}</span>
                     <span className="text-lg text-slate-400">Teams: {member.teams.length}</span>
@@ -161,7 +157,7 @@ export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved }) => {
                             }}
                         />
                     ))}
-                </div>
+                </motion.div>
             )}
         </Formik>
     );
@@ -202,14 +198,17 @@ export const Members = () => {
                     <button type="button" className="button " onClick={() => setInviteDialogOpen((s) => !s)}>
                         Invite Members
                     </button>
-                    <InviteMembersDialog
-                        existingMembers={data}
-                        onUpdate={(members) => {
-                            setInviteDialogOpen(false);
-                            mutate(members);
-                        }}
-                        open={inviteDialogOpen}
-                    />
+                    <AnimatePresence>
+                        {inviteDialogOpen && (
+                            <InviteMembersDialog
+                                existingMembers={data}
+                                onUpdate={(members) => {
+                                    setInviteDialogOpen(false);
+                                    mutate(members);
+                                }}
+                            />
+                        )}
+                    </AnimatePresence>
                 </div>
             )}
 
@@ -220,9 +219,11 @@ export const Members = () => {
                     <input type="checkbox" />
                     <span className="text-slate-300">Members</span>
                 </div>
-                {data.map((member) => (
-                    <MemberRow member={member} onRemoved={mutate} />
-                ))}
+                <AnimatePresence initial={false}>
+                    {data.map((member) => (
+                        <MemberRow key={member.username} member={member} onRemoved={mutate} />
+                    ))}
+                </AnimatePresence>
             </div>
         </div>
     );

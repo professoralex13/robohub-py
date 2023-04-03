@@ -6,6 +6,7 @@ import { TextField } from 'components/Form';
 import { ErrorBox } from 'components/Notication';
 import { getResponseErrorMessage, requestUnauthorized, useRequest } from 'hooks/useRequest';
 import { concurrentControledTest } from 'concurrencyControl';
+import { motion } from 'framer-motion';
 
 /**
  * Schema for validating the SignUp page fields
@@ -29,40 +30,46 @@ export const CreateOrganisation = () => {
     const request = useRequest();
 
     return (
-        <div className="flex h-screen flex-col items-center justify-center gap-16">
-            <span className="animate-fadeUp text-6xl">Create Organisation</span>
-            <Formik
-                initialValues={{ name: '', description: '', location: '' }}
-                onSubmit={async ({ name, description, location }, { setStatus }) => request(
-                    '/organisations/create',
-                    'POST',
-                    {
-                        name,
-                        description,
-                        location,
-                    },
-                ).then(() => {
-                    navigate(`/organisations/${name}`);
-                }).catch((error) => {
-                    setStatus(getResponseErrorMessage(error)[0]);
-                })}
-                validationSchema={CreateOrganisationSchema}
+        <div className="overflow-hidden">
+            <motion.div
+                className="flex h-screen flex-col items-center justify-center gap-16"
+                initial={{ opacity: 0, y: 100 }}
+                animate={{ opacity: 1, y: 0 }}
             >
-                {({ submitForm, isSubmitting, status }) => (
-                    <Form className="card animate-fadeUp flex flex-col items-center justify-around gap-5 p-10">
-                        <TextField name="name" placeholder="Name" />
-                        <TextField name="description" placeholder="Description" />
-                        <TextField name="location" placeholder="Location" />
+                <span className="animate-fadeUp text-6xl">Create Organisation</span>
+                <Formik
+                    initialValues={{ name: '', description: '', location: '' }}
+                    onSubmit={async ({ name, description, location }, { setStatus }) => request(
+                        '/organisations/create',
+                        'POST',
+                        {
+                            name,
+                            description,
+                            location,
+                        },
+                    ).then(() => {
+                        navigate(`/organisations/${name}`);
+                    }).catch((error) => {
+                        setStatus(getResponseErrorMessage(error)[0]);
+                    })}
+                    validationSchema={CreateOrganisationSchema}
+                >
+                    {({ submitForm, isSubmitting, status }) => (
+                        <Form className="card animate-fadeUp flex flex-col items-center justify-around gap-5 p-10">
+                            <TextField name="name" placeholder="Name" />
+                            <TextField name="description" placeholder="Description" />
+                            <TextField name="location" placeholder="Location" />
 
-                        {status && (
-                            <ErrorBox>{status}</ErrorBox>
-                        )}
+                            {status && (
+                                <ErrorBox>{status}</ErrorBox>
+                            )}
 
-                        {isSubmitting ? <Oval stroke="#64a9e9" />
-                            : <button type="submit" onClick={submitForm} className="button">Create</button>}
-                    </Form>
-                )}
-            </Formik>
+                            {isSubmitting ? <Oval stroke="#64a9e9" />
+                                : <button type="submit" onClick={submitForm} className="button">Create</button>}
+                        </Form>
+                    )}
+                </Formik>
+            </motion.div>
         </div>
     );
 };
