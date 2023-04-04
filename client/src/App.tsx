@@ -1,27 +1,18 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { FC, ReactElement, Suspense } from 'react';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { Suspense } from 'react';
 import { ErrorPage } from 'pages/Error';
+import { Settings } from 'pages/Settings';
+import { ProtectedRoute } from 'components/ProtectedRoute';
 import { Header } from './components/Header';
 import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
 import { Home } from './pages/Home';
 import { OrganisationList } from './pages/OrganisationList';
-import { useAuthenticationContext } from './AuthenticationContext';
 import { LoadingPage } from './components/LoadingPage';
 import { OrganisationRoot } from './pages/organisation';
 import { CreateOrganisation } from './pages/CreateOrganisation';
 import { ProfileContextProvider } from './ProfileContext';
 import { ConfirmationContextProvider } from './ConfirmationContext';
-
-const ProtectedRoute: FC<{ children: ReactElement }> = ({ children }) => {
-    const { token } = useAuthenticationContext();
-
-    if (!token) {
-        return <Navigate to="/" />;
-    }
-
-    return children;
-};
 
 export const Root = () => (
     <Suspense fallback={<LoadingPage />}>

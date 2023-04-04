@@ -5,13 +5,13 @@ import { Oval } from 'react-loading-icons';
 import clsx from 'clsx';
 import { Formik } from 'formik';
 import { useHover } from 'use-events';
-import { Navigate } from 'react-router-dom';
 import { requestUnauthorized, useRequest } from 'hooks/useRequest';
 import { concurrentControledTest } from 'concurrencyControl';
 import profilePicture from 'assets/profile_pic.png';
-import { Profile, useProfileContext } from 'ProfileContext';
+import { Profile } from 'ProfileContext';
 import { useConfirmation } from 'ConfirmationContext';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useProtectedRouteProfile } from 'components/ProtectedRoute';
 import { MembershipType, useOrganisation } from '.';
 
 interface UserCardProps {
@@ -117,15 +117,11 @@ interface MemberRowProps {
 export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved }) => {
     const request = useRequest();
 
-    const profile = useProfileContext();
-
     const confirm = useConfirmation();
 
     const organisation = useOrganisation();
 
-    if (!profile) {
-        return <Navigate to="/" />;
-    }
+    const profile = useProtectedRouteProfile();
 
     const showRemoveButton = organisation.membershipType >= MembershipType.Admin && profile.username !== member.username;
 
