@@ -168,14 +168,14 @@ def organisation_member_list(organisation_name: str):
             }
         })
 
-    return [{
+    return jsonify([{
         'username': user.user.username,
         'fullName': user.user.fullName,
         'teams': [team.team.id for team in user.user.teams
                   if team.team is not None],
         'isAdmin': user.isAdmin
         } for user in organisation_user
-        if user.user is not None and user.user.teams is not None]
+        if user.user is not None and user.user.teams is not None])
 
 
 @organisations_router.post('/<organisation_name>/members/add/<username>')
