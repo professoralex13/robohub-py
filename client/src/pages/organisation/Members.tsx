@@ -10,8 +10,9 @@ import { concurrentControledTest } from 'concurrencyControl';
 import profilePicture from 'assets/profile_pic.png';
 import { Profile } from 'ProfileContext';
 import { useConfirmation } from 'ConfirmationContext';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useProtectedRouteProfile } from 'components/ProtectedRoute';
+import { AnimatedContainer } from 'components/AnimatedContainer';
 import { MembershipType, useOrganisation } from '.';
 
 interface UserCardProps {
@@ -136,9 +137,11 @@ export const MemberRow: FC<MemberRowProps> = ({ member, onRemoved }) => {
             {({ submitForm, isSubmitting }) => (
                 <motion.div
                     className="grid grid-cols-[max-content_auto_max-content_5%] gap-3 overflow-hidden p-3"
-                    initial={{ opacity: 0, maxHeight: 0 }}
-                    animate={{ opacity: 1, maxHeight: 56 }}
-                    exit={{ opacity: 0, maxHeight: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    layout="position"
+                    transition={{ layout: { duration: 0.2 } }}
                 >
                     <input type="checkbox" className="m-auto" />
                     <span className="text-xl text-slate-400">{member.username}</span>
@@ -175,8 +178,9 @@ export const Members = () => {
 
     const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
+    /* Grid layout With a 4 column, 2 row layout */
     return (
-        <div className="grid grid-cols-[14rem_min-content_auto_max-content] grid-rows-[3rem_max-content] gap-3"> {/* Grid layout With a 4 column, 2 row layout */}
+        <div className="grid grid-cols-[14rem_min-content_auto_max-content] grid-rows-[3rem_max-content] gap-3">
             {/* View Selection Card */}
             <div className="card flex h-min flex-col">
                 <button className="modal-item rounded-t-md bg-slate-700 text-left" type="button">
@@ -210,16 +214,18 @@ export const Members = () => {
 
             {/* Card showing list of all members in organisation */}
             <div className="card col-span-3 col-start-2 row-start-2">
-                {/* Member list card header */}
-                <div className="grid grid-cols-[min-content_auto] gap-3 rounded-t-md bg-slate-700 px-3 py-2">
-                    <input type="checkbox" />
-                    <span className="text-slate-300">Members</span>
-                </div>
-                <AnimatePresence initial={false}>
-                    {data.map((member) => (
-                        <MemberRow key={member.username} member={member} onRemoved={mutate} />
-                    ))}
-                </AnimatePresence>
+                <AnimatedContainer duration={0.2}>
+                    {/* Member list card header */}
+                    <div className="grid grid-cols-[min-content_auto] gap-3 rounded-t-md bg-slate-700 px-3 py-2">
+                        <input type="checkbox" />
+                        <span className="text-slate-300">Members</span>
+                    </div>
+                    <LayoutGroup>
+                        {data.map((member) => (
+                            <MemberRow key={member.username} member={member} onRemoved={mutate} />
+                        ))}
+                    </LayoutGroup>
+                </AnimatedContainer>
             </div>
         </div>
     );
