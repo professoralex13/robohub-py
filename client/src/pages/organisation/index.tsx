@@ -1,11 +1,11 @@
 import { NavLink, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { Dashboard, Icon, List, Notes, Settings, User, Users } from 'tabler-icons-react';
 import { FC, PropsWithChildren, Suspense, createContext, useContext } from 'react';
-import clsx from 'clsx';
 import { Oval } from 'react-loading-icons';
 import useSWR from 'swr';
 import teamLogo from 'assets/TeamLogo.png';
 import { useRequest } from 'hooks/useRequest';
+import { motion } from 'framer-motion';
 import { Overview } from './Overview';
 import { Members } from './Members';
 
@@ -37,10 +37,15 @@ interface HeaderLinkProps extends PropsWithChildren {
 }
 
 const HeaderLink: FC<HeaderLinkProps> = ({ symbol: Symbol, count, children, url = children.toLowerCase() }) => (
-    <NavLink to={url} className={({ isActive }) => clsx('hover:border-navy-300 group flex cursor-pointer items-center gap-2 pb-1', isActive && '-mb-0.5 border-b-2')}>
-        <Symbol size={25} className="group-hover:stroke-navy-300" />
-        <span className="group-hover:text-navy-300 text-xl">{children}</span>
-        {count !== undefined && <span className="group-hover:text-navy-300 group-hover:border-navy-300 rounded-full border-2 px-1 text-lg">{count}</span>}
+    <NavLink to={url} className="hover:border-navy-300 group relative flex cursor-pointer items-center gap-2 pb-1">
+        {({ isActive }) => (
+            <>
+                <Symbol size={25} className="group-hover:stroke-navy-300" />
+                <span className="group-hover:text-navy-300 text-xl">{children}</span>
+                {count !== undefined && <span className="group-hover:text-navy-300 group-hover:border-navy-300 rounded-full border-2 px-1 text-lg">{count}</span>}
+                {isActive && <motion.div layoutId="organisation-header-underline" className="absolute inset-x-0 -bottom-1 h-0.5 bg-white" />}
+            </>
+        )}
     </NavLink>
 );
 
