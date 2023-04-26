@@ -37,13 +37,13 @@ interface HeaderLinkProps extends PropsWithChildren {
 }
 
 const HeaderLink: FC<HeaderLinkProps> = ({ symbol: Symbol, count, children, url = children.toLowerCase() }) => (
-    <NavLink to={url} className="hover:border-navy-300 group relative flex cursor-pointer items-center gap-2 pb-1">
+    <NavLink to={url} className="hover:border-navy-300 group relative flex h-10 cursor-pointer items-center gap-2 pb-1">
         {({ isActive }) => (
             <>
                 <Symbol size={25} className="group-hover:stroke-navy-300" />
                 <span className="group-hover:text-navy-300 text-xl">{children}</span>
                 {count !== undefined && <span className="group-hover:text-navy-300 group-hover:border-navy-300 rounded-full border-2 px-1 text-lg">{count}</span>}
-                {isActive && <motion.div layoutId="organisation-header-underline" className="absolute inset-x-0 -bottom-1 h-0.5 bg-white" />}
+                {isActive && <motion.div layoutId="organisation-header-underline" className="group-hover:bg-navy-300 absolute inset-x-0 -bottom-1 h-0.5 rounded-full bg-white" />}
             </>
         )}
     </NavLink>
