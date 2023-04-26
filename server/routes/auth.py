@@ -99,13 +99,17 @@ def get_token():
     '''Handles a request for a user to login by generating a new jwt'''
 
     if request.json is not None:
-        email: str = request.json.get(EMAIL_KEY, None)
+        email_username: str = request.json.get(EMAIL_KEY, None)
         password: str = request.json.get(PASSWORD_KEY, None)
     else:
         return {'error': 'Content type must be application/json'}, 415
 
+    # Check if provided username/email is either the username or email of user
     user = database.user.find_first(where={
-        'email': email,
+        'OR': [
+            {'email': email_username},
+            {'username': email_username},
+        ]
     })
 
     salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
@@ -113,7 +117,7 @@ def get_token():
     if user is None or user.passwordHash != salted_password:
         raise InvalidCredentials()
 
-    access_token = create_access_token(identity=email)
+    access_token = create_access_token(identity=user.email)
     response = {'token': access_token}
 
     return response
