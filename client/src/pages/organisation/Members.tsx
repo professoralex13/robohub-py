@@ -5,9 +5,8 @@ import { Oval } from 'react-loading-icons';
 import clsx from 'clsx';
 import { Formik } from 'formik';
 import { useHover } from 'use-events';
-import { requestUnauthorized, useRequest } from 'hooks/useRequest';
+import { API_URL, requestUnauthorized, useRequest } from 'hooks/useRequest';
 import { concurrentControledTest } from 'concurrencyControl';
-import profilePicture from 'assets/profile_pic.png';
 import { Profile } from 'ProfileContext';
 import { useConfirmation } from 'ConfirmationContext';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
@@ -53,7 +52,7 @@ const UserCard: FC<UserCardProps> = ({ user, onAdded }) => {
                         (isSubmitting || hovered) && 'opacity-50 blur-sm',
                     )}
                     >
-                        <img src={profilePicture} alt="profile" className="col-span-1 col-start-1 row-span-2 row-start-1 h-14 w-14 rounded-full" />
+                        <img src={`${API_URL}/content/avatar/users/${user.id}`} alt="profile" className="col-span-1 col-start-1 row-span-2 row-start-1 h-14 w-14 rounded-full" />
                         <span className="col-start-2 row-start-1 text-start text-xl">{user.username}</span>
                         <span className="col-start-2 row-start-2 text-start text-lg text-slate-300">{user.email}</span>
                     </div>

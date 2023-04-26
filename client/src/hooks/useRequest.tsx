@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import { useCallback } from 'react';
 import { useAuthenticationContext } from 'AuthenticationContext';
 
-const API_URL: string = import.meta.env.VITE_API_URL;
+export const API_URL: string = import.meta.env.VITE_API_URL;
 
 const TokenResponseSchema = yup.object().shape({
     token: yup.string().required(),

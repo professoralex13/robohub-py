@@ -4,6 +4,7 @@ from flask import Flask, Response
 from flask_cors import CORS
 from server.routes.auth import auth_router, jwt, refresh_expiring_jwts
 from server.routes.account import account_router
+from server.routes.content import content_router
 from server.routes.organisations import organisations_router
 from server.config import JWT_SECRET
 from server.error_handling import register_handlers
@@ -20,6 +21,7 @@ jwt.init_app(app)
 app.register_blueprint(auth_router, url_prefix='/auth')
 app.register_blueprint(account_router, url_prefix='/account')
 app.register_blueprint(organisations_router, url_prefix='/organisations')
+app.register_blueprint(content_router, url_prefix='/content')
 
 register_handlers(app)
 

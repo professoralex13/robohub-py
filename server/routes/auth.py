@@ -2,6 +2,9 @@
 from datetime import datetime, timezone, timedelta
 import json
 import hashlib
+import os
+import shutil
+import requests
 from flask import Blueprint, Response, jsonify, request
 from flask_jwt_extended import (
     JWTManager,
@@ -15,7 +18,12 @@ from prisma.models import User
 
 from server.database import database
 
-from server.config import SALT, EMAIL_KEY, PASSWORD_KEY, USERNAME_KEY
+from server.config import (
+    SALT,
+    EMAIL_KEY,
+    PASSWORD_KEY,
+    USER_AVATAR_PATH,
+    USERNAME_KEY)
 
 from server.error_handling import (
     MediaTypeMustBeJson,
@@ -63,11 +71,22 @@ def sign_up():
 
     salted_password = hashlib.md5((password + SALT).encode()).hexdigest()
 
-    database.user.create(data={
+    user = database.user.create(data={
         'email': email,
         'username': username,
         'passwordHash': salted_password,
     })
+
+    pfp_response = requests.get(f'https://robohash.org/{username}.png',
+                                stream=True)
+
+    path = os.path.join(USER_AVATAR_PATH, f'{user.id}.png')
+
+    with open(path, 'wb') as file:
+        pfp_response.raw.decode_content = True
+        shutil.copyfileobj(pfp_response.raw, file)
+
+    del pfp_response
 
     access_token = create_access_token(identity=email)
     response = {'token': access_token, 'oogabogga': 'hehe'}

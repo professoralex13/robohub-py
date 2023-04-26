@@ -2,11 +2,11 @@ import { Search } from 'tabler-icons-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import clsx from 'clsx';
-import profilePicture from 'assets/profile_pic.png';
 import caretIcon from 'assets/Caret.svg';
 import { useProfileContext } from 'ProfileContext';
 import { useAuthenticationContext } from 'AuthenticationContext';
 import { AnimatePresence, motion } from 'framer-motion';
+import { API_URL } from 'hooks/useRequest';
 
 interface LinkProps {
     to: string;
@@ -80,7 +80,7 @@ const AccountSection = () => {
                 }}
                 type="button"
             >
-                <img src={profilePicture} alt="profile" className="h-12 w-12 rounded-full" />
+                <img src={`${API_URL}/content/avatar/users/${profile.id}`} alt="profile" className="h-12 w-12 rounded-full" />
                 <img src={caretIcon} alt="caret" />
             </button>
             <AnimatePresence>

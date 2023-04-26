@@ -47,6 +47,9 @@ export const router = createBrowserRouter([{
         path: 'organisations/create',
         element: <ProtectedRoute><CreateOrganisation /></ProtectedRoute>,
     }, {
+        path: 'settings',
+        element: <ProtectedRoute><Settings /></ProtectedRoute>,
+    }, {
         index: true,
         element: <Home />,
     }],

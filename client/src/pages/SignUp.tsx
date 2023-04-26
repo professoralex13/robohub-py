@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { Oval } from 'react-loading-icons';
 import { Navigate } from 'react-router';
-import { TextField } from 'components/Form';
+import { TextField } from 'components/TextField';
 import { ErrorBox } from 'components/Notication';
 import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from 'hooks/useRequest';
 import { useAuthenticationContext } from 'AuthenticationContext';

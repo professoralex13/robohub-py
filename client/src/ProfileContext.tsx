@@ -4,6 +4,7 @@ import { useRequest } from './hooks/useRequest';
 import { useAuthenticationContext } from './AuthenticationContext';
 
 export interface Profile {
+    id: number;
     email: string;
     username: string;
     fullName?: string;

@@ -30,6 +30,11 @@ def load_from_env(key: str) -> str:
 
 JWT_SECRET = load_from_env('JWT_SECRET')
 SALT = load_from_env('SALT')
+CONTENT_PATH = load_from_env('CONTENT_PATH')
+USER_AVATAR_PATH = os.path.join(CONTENT_PATH, 'avatars')
+
 EMAIL_KEY = 'email'
 PASSWORD_KEY = 'password'
 USERNAME_KEY = 'username'
+
+os.makedirs(USER_AVATAR_PATH, exist_ok=True)
