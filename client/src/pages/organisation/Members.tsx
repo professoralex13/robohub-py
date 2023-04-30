@@ -39,11 +39,11 @@ const UserCard: FC<UserCardProps> = ({ user, onAdded }) => {
             {({ submitForm, isSubmitting }) => (
                 <button
                     className="relative h-max w-full cursor-pointer"
-                    onClick={async () => {
+                    onClick={!isSubmitting ? (async () => {
                         if (await confirm(<span>Add <strong>{user.username}</strong> to <strong>{organisation.name}</strong></span>)) {
                             submitForm();
                         }
-                    }}
+                    }) : undefined}
                     type="button"
                     {...hoverProps}
                 >
