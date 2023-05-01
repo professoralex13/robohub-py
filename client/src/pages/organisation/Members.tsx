@@ -9,9 +9,10 @@ import { API_URL, requestUnauthorized, useRequest } from 'hooks/useRequest';
 import { concurrentControledTest } from 'concurrencyControl';
 import { Profile } from 'ProfileContext';
 import { useConfirmation } from 'ConfirmationContext';
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { LayoutGroup, motion } from 'framer-motion';
 import { useProtectedRouteProfile } from 'components/ProtectedRoute';
 import { AnimatedContainer } from 'components/AnimatedContainer';
+import { ModalWrapper } from 'components/ModalWrapper';
 import { MembershipType, useOrganisation } from '.';
 
 interface UserCardProps {
@@ -194,20 +195,18 @@ export const Members = () => {
             <input placeholder="Find Members" type="text" className="row-span-1" />
             {organisation.membershipType >= MembershipType.Admin && (
                 <div className="relative col-start-4">
-                    <button type="button" className="button " onClick={() => setInviteDialogOpen((s) => !s)}>
+                    <button type="button" className="button" onClick={() => setInviteDialogOpen(true)}>
                         Invite Members
                     </button>
-                    <AnimatePresence>
-                        {inviteDialogOpen && (
-                            <InviteMembersDialog
-                                existingMembers={data}
-                                onUpdate={(members) => {
-                                    setInviteDialogOpen(false);
-                                    mutate(members);
-                                }}
-                            />
-                        )}
-                    </AnimatePresence>
+                    <ModalWrapper open={inviteDialogOpen} onClose={() => setInviteDialogOpen(false)}>
+                        <InviteMembersDialog
+                            existingMembers={data}
+                            onUpdate={(members) => {
+                                setInviteDialogOpen(false);
+                                mutate(members);
+                            }}
+                        />
+                    </ModalWrapper>
                 </div>
             )}
 

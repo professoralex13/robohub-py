@@ -1,12 +1,13 @@
 import { Search } from 'tabler-icons-react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FC, PropsWithChildren, useEffect, useState } from 'react';
+import { FC, PropsWithChildren, useState } from 'react';
 import clsx from 'clsx';
 import caretIcon from 'assets/Caret.svg';
 import { useProfileContext } from 'ProfileContext';
 import { useAuthenticationContext } from 'AuthenticationContext';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { API_URL } from 'hooks/useRequest';
+import { ModalWrapper } from './ModalWrapper';
 
 interface LinkProps {
     to: string;
@@ -16,7 +17,12 @@ const Link: FC<PropsWithChildren<LinkProps>> = ({ to, children }) => (
     <NavLink to={to} className={({ isActive }) => clsx('link text-xl', isActive && 'text-navy-300 underline')}>{children}</NavLink>
 );
 
-const AccountModal: FC<{ username: string }> = ({ username }) => {
+interface AccountModalProps {
+    username: string;
+    onSelect: () => void;
+}
+
+const AccountModal: FC<AccountModalProps> = ({ username, onSelect }) => {
     const { logout } = useAuthenticationContext();
 
     const navigate = useNavigate();
@@ -29,16 +35,18 @@ const AccountModal: FC<{ username: string }> = ({ username }) => {
             exit={{ clipPath: 'inset(0 0 100% 0)' }}
         >
             <span className="border-b-2 border-slate-700 px-4 py-2 text-lg">Username: <br /><strong>{username}</strong></span>
-            <NavLink to="/organisations" className="modal-item">
-                Your organisations
-            </NavLink>
-            <NavLink to="/settings" className="modal-item">
-                Settings
-            </NavLink>
+            <div className="flex flex-col" onClick={onSelect}>
+                <NavLink to="/organisations" className="modal-item" onClick={onSelect}>
+                    Your organisations
+                </NavLink>
+                <NavLink to="/settings" className="modal-item" onClick={onSelect}>
+                    Settings
+                </NavLink>
 
-            <button onClick={() => logout().finally(() => navigate('/'))} type="button" className="modal-item rounded-b-md border-t-2 border-slate-700 text-left">
-                Sign out
-            </button>
+                <button onClick={() => logout().finally(() => navigate('/'))} type="button" className="modal-item rounded-b-md border-t-2 border-slate-700 text-left">
+                    Sign out
+                </button>
+            </div>
         </motion.div>
     );
 };
@@ -47,19 +55,6 @@ const AccountSection = () => {
     const [modalOpen, setModalOpen] = useState(false);
 
     const profile = useProfileContext();
-
-    // TODO: Make a generic way to do this
-    useEffect(() => {
-        const callback = () => {
-            setModalOpen(false);
-        };
-
-        if (modalOpen) {
-            document.addEventListener('click', callback);
-        } else {
-            document.removeEventListener('click', callback);
-        }
-    }, [modalOpen]);
 
     if (!profile) {
         return (
@@ -74,18 +69,15 @@ const AccountSection = () => {
         <div className="relative">
             <button
                 className="flex flex-row items-center gap-2"
-                onClick={(e) => {
-                    e.stopPropagation();
-                    setModalOpen((state) => !state);
-                }}
+                onClick={() => setModalOpen(true)}
                 type="button"
             >
                 <img src={`${API_URL}/content/avatar/users/${profile.id}`} alt="profile" className="h-12 w-12 rounded-full" />
                 <img src={caretIcon} alt="caret" />
             </button>
-            <AnimatePresence>
-                {modalOpen && <AccountModal username={profile.username} />}
-            </AnimatePresence>
+            <ModalWrapper open={modalOpen} onClose={() => setModalOpen(false)}>
+                <AccountModal onSelect={() => setModalOpen(false)} username={profile.username} />
+            </ModalWrapper>
         </div>
     );
 };

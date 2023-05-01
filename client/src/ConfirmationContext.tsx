@@ -14,7 +14,11 @@ export const ConfirmationDialog: FC<PropsWithChildren<ConfirmationDialogProps>> 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={() => onSelect(false)}
+        onClick={(e) => {
+            onSelect(false);
+            // Prevents closing of other dialogs which may have been opened already behind
+            e.stopPropagation();
+        }}
     >
         <motion.div
             className="card flex flex-col items-center gap-2 p-3"
