@@ -3,6 +3,8 @@ import { Suspense } from 'react';
 import { ErrorPage } from 'pages/Error';
 import { Settings } from 'pages/Settings';
 import { ProtectedRoute } from 'components/ProtectedRoute';
+import { ConfirmationContextProvider } from 'contexts/ConfirmationContext';
+import { ProfileContextProvider } from 'contexts/ProfileContext';
 import { Header } from './components/Header';
 import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
@@ -11,8 +13,6 @@ import { OrganisationList } from './pages/OrganisationList';
 import { LoadingPage } from './components/LoadingPage';
 import { OrganisationRoot } from './pages/organisation';
 import { CreateOrganisation } from './pages/CreateOrganisation';
-import { ProfileContextProvider } from './ProfileContext';
-import { ConfirmationContextProvider } from './ConfirmationContext';
 
 export const Root = () => (
     <Suspense fallback={<LoadingPage />}>

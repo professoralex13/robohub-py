@@ -5,7 +5,7 @@ import { Navigate } from 'react-router';
 import { TextField } from 'components/TextField';
 import { ErrorBox } from 'components/Notication';
 import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from 'hooks/useRequest';
-import { useAuthenticationContext } from 'AuthenticationContext';
+import { useAuthenticationContext } from 'contexts/AuthenticationContext';
 import { concurrentControledTest } from 'concurrencyControl';
 import { motion } from 'framer-motion';
 

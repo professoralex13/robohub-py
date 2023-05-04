@@ -1,6 +1,6 @@
 import { createContext, FC, PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
 import { useSWRConfig } from 'swr';
-import { requestAuthorized } from './hooks/useRequest';
+import { requestAuthorized } from '../hooks/useRequest';
 
 interface AuthenticationContextType {
     token?: string;

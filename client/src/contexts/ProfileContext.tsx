@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, createContext, useContext } from 'react';
 import useSWR from 'swr';
-import { useRequest } from './hooks/useRequest';
+import { useRequest } from '../hooks/useRequest';
 import { useAuthenticationContext } from './AuthenticationContext';
 
 export interface Profile {

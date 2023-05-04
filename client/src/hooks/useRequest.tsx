@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import * as yup from 'yup';
 import { useCallback } from 'react';
-import { useAuthenticationContext } from 'AuthenticationContext';
+import { useAuthenticationContext } from 'contexts/AuthenticationContext';
 
 export const API_URL: string = import.meta.env.VITE_API_URL;
 

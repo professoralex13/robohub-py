@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 import { ErrorBox } from 'components/Notication';
 import { TextField } from 'components/TextField';
 import { TokenResponseType, getResponseErrorMessage, requestUnauthorized } from 'hooks/useRequest';
-import { useAuthenticationContext } from 'AuthenticationContext';
+import { useAuthenticationContext } from 'contexts/AuthenticationContext';
 import { motion } from 'framer-motion';
 
 const SignInSchema = Yup.object().shape({

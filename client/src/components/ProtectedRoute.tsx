@@ -1,4 +1,4 @@
-import { Profile, useProfileContext } from 'ProfileContext';
+import { Profile, useProfileContext } from 'contexts/ProfileContext';
 import { FC, PropsWithChildren, createContext, useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
