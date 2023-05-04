@@ -5,6 +5,7 @@ import { Settings } from 'pages/Settings';
 import { ProtectedRoute } from 'components/ProtectedRoute';
 import { ConfirmationContextProvider } from 'contexts/ConfirmationContext';
 import { ProfileContextProvider } from 'contexts/ProfileContext';
+import { DialogContextProvider } from 'contexts/DialogContext';
 import { Header } from './components/Header';
 import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
@@ -16,14 +17,16 @@ import { CreateOrganisation } from './pages/CreateOrganisation';
 
 export const Root = () => (
     <Suspense fallback={<LoadingPage />}>
-        <ConfirmationContextProvider>
-            <ProfileContextProvider>
-                <Header />
-                <Suspense fallback={<LoadingPage />}>
-                    <Outlet />
-                </Suspense>
-            </ProfileContextProvider>
-        </ConfirmationContextProvider>
+        <DialogContextProvider>
+            <ConfirmationContextProvider>
+                <ProfileContextProvider>
+                    <Header />
+                    <Suspense fallback={<LoadingPage />}>
+                        <Outlet />
+                    </Suspense>
+                </ProfileContextProvider>
+            </ConfirmationContextProvider>
+        </DialogContextProvider>
     </Suspense>
 );
 
