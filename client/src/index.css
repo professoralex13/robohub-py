@@ -30,11 +30,15 @@
   }
 
   .button {
-    @apply bg-navy-300 text-navy-900 rounded-md px-4 py-3 text-xl duration-200 !important
+    @apply bg-navy-300 text-navy-900 rounded-md px-4 py-3 text-xl duration-200
   }
 
   .button:hover {
-    @apply shadow-button
+    @apply bg-navy-200
+  }
+  
+  .button:active {
+    @apply bg-navy-100
   }
   
   ::-webkit-scrollbar {
