@@ -60,14 +60,14 @@ model TeamUser {
 }
 
 model Team {
-    id             String       @id
+    id             String       @unique
     name           String
     organisation   Organisation @relation(fields: [organisationId], references: [id])
     organisationId Int
     notebooks      NoteBook[]
     users          TeamUser[]
 
-    @@unique([name, organisationId])
+    @@id([name, organisationId])
 }
 
 model Part {

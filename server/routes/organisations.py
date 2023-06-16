@@ -224,12 +224,69 @@ def remove_member(organisation_name: str, username: str):
     return organisation_member_list(organisation_name)
 
 
+@organisations_router.post('/<organisation_name>/teams/create')
+@jwt_required()
+def create_team(organisation_name: str):
+    '''
+        Creates a new team within a given organisation
+    '''
+    if request.json is not None:
+        team_id: str = request.json.get('id', None)
+        name: str = request.json.get('name', None)
+    else:
+        raise MediaTypeMustBeJson()
+
+    organisation, _ = get_organisation(organisation_name, MembershipType.ADMIN)
+
+    database.team.create(data={
+        'id': team_id,
+        'name': name,
+        'organisationId': organisation.id,
+    })
+
+    return team_list(organisation_name)
+
+
+@organisations_router.get('/<organisation_name>/teams')
+@jwt_required()
+def team_list(organisation_name: str):
+    '''
+        Gets a list of teams within a given organisation
+    '''
+
+    organisation, _ = get_organisation(organisation_name)
+
+    teams = database.team.find_many(where={'organisationId': organisation.id},
+                                    include={'notebooks': True, 'users': True})
+
+    return jsonify([{'id': team.id,
+                    'name': team.name,
+                    'notebookCount': len(team.notebooks),
+                    'memberCount': len(team.users)}
+                    for team in teams if team.notebooks is not None and team.users is not None])
+
 @organisations_router.get('/name-taken/<name>')
 def name_taken(name: str):
     '''Handles a request to see whether a given organisation name is taken'''
 
     in_use = database.organisation.find_first(where={
         'name': name,
+    })
+
+    return jsonify(in_use is not None)
+
+
+@organisations_router.get('/<organisation_name>/team-name-taken/<team_name>')
+def team_name_taken(organisation_name: str, team_name: str):
+    '''Handles a request to see whether a given organisation has a team by that name'''
+
+    in_use = database.team.find_first(where={
+        'name': team_name,
+        'organisation': {
+            'is': {
+                'name': organisation_name,
+            }
+        },
     })
 
     return jsonify(in_use is not None)

@@ -8,6 +8,7 @@ import { useRequest } from 'hooks/useRequest';
 import { motion } from 'framer-motion';
 import { Overview } from './Overview';
 import { Members } from './Members';
+import { Teams } from './Teams';
 
 export enum MembershipType {
     None,
@@ -99,6 +100,10 @@ export const OrganisationRoot = () => {
                         <Route
                             path="members"
                             element={<Members />}
+                        />
+                        <Route
+                            path="teams"
+                            element={<Teams />}
                         />
                     </Routes>
                 </Suspense>
